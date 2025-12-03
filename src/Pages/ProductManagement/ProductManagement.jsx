@@ -360,7 +360,7 @@ const ProductManagementApp = () => {
 
             const form = new FormData();
             form.append('image', base64);
-            const res = await fetch(`https://api.imgbb.com/1/upload?key=31305da6f416afe11565950430cdcbbb`, {
+            const res = await fetch(`https://api.imgbb.com/1/upload?key=552a2c1c2f57b181499140dabbd6f7ad`, {
               method: "POST",
               body: form
             });
