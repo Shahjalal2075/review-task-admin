@@ -443,6 +443,94 @@ const Member = ({ data, onDelete }) => {
         });
     };
 
+    const handleTrainingMoney = () => {
+        MySwal.fire({
+            title: `<span style="color:#4f46e5;">💸 Add Balance</span>`,
+            html: `
+            <div style="font-size: 16px;">
+              <!-- Member Info -->
+              <p style="margin-bottom: 16px;">
+                <strong style="color:#059669;">👤 Member Account:</strong> 
+                <span style="color:#111827;">${user.username}</span>
+              </p>
+      
+              <!-- Balance Type Dropdown -->
+              <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                <label for="balancetype" style="width: 140px; color:#3b82f6;">📂 Balance Type</label>
+                <select id="balancetype" class="swal2-input" style="flex: 1; background-color:#e0f2fe; border-color:#3b82f6;">
+                  <option value="Deposit">💰 Training</option>
+                </select>
+              </div>
+      
+              <!-- Amount Input -->
+              <div style="display: flex; align-items: center;">
+                <label for="amount" style="width: 140px; color:#3b82f6;">💵 Amount</label>
+                <input id="amount" class="swal2-input" type="number" placeholder="Enter amount" style="flex: 1; background-color:#ecfccb; border-color:#84cc16;" />
+              </div>
+            </div>
+          `,
+            showCancelButton: true,
+            confirmButtonText: '✅ Confirm',
+            cancelButtonText: '❌ Cancel',
+            customClass: {
+                popup: 'swal2-popup-border-radius',
+            },
+            preConfirm: () => {
+                const balancetype = document.getElementById('balancetype')?.value;
+                const amount = document.getElementById('amount')?.value;
+
+                if (!amount || isNaN(amount) || Number(amount) <= 0) {
+                    Swal.showValidationMessage('⚠️ Please enter a valid amount');
+                    return false;
+                }
+
+                return { balancetype, amount };
+            },
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const { balancetype, amount } = result.value;
+                const timestamp = new Date().toISOString();
+                const deposit = {
+                    username: user.username,
+                    amount,
+                    status: "Success",
+                    depositTime: timestamp,
+                    operator: userAccount,
+                    depositType: balancetype
+                }
+                const depositBal = {
+                    trainingBal: user.trainingBal+parseFloat(amount),
+                }
+
+                fetch('https://review-task-server.vercel.app/deposit', {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify(deposit)
+                })
+                fetch(`https://review-task-server.vercel.app/user-list/training-bal-update/${userEmail}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'content-type': 'application/json'
+                    },
+                    body: JSON.stringify(depositBal)
+                })
+                    .then(() => {
+                        MySwal.fire({
+                            icon: 'success',
+                            title: '🎉 Success!',
+                            html: `<strong>${user.username}</strong>'s balance has been updated with <strong>${amount}</strong> (${balancetype}).`,
+                            confirmButtonColor: '#10b981',
+                        });
+                    })
+                    .catch(() => {
+
+                    });
+            }
+        });
+    };
+
     const handleRefferCodeStatus = () => {
         const action = userRefferStatus ? "disable" : "enable";
 
@@ -519,9 +607,8 @@ const Member = ({ data, onDelete }) => {
     }
 
     const handleVipLevel = () => {
-        let selectedVip = user.vipLevel || 'VIP 0'; // fallback if undefined
+        let selectedVip = user.vipLevel || 'VIP 0';
 
-        // Convert vipLevels to option HTML
         const optionsHtml = vipLevels.map(level => {
             return `<option value="${level.vip}">${level.vip}</option>`;
         }).join('');
@@ -572,12 +659,19 @@ const Member = ({ data, onDelete }) => {
             }
         }).then((result) => {
             if (result.isConfirmed) {
+                const isTraining = result.value === "Training";
+                const trainingBal = isTraining ? 1000 : 0;
+                const totalBal = isTraining ? userTotalBal : userTotalBal + trainingBal;
                 fetch(`https://review-task-server.vercel.app/user-list/vip-update/${userEmail}`, {
                     method: 'PATCH',
                     headers: {
                         'content-type': 'application/json'
                     },
-                    body: JSON.stringify({ vipLevel: result.value })
+                    body: JSON.stringify({
+                        vipLevel: result.value,
+                        trainingBal: trainingBal,
+                        totalBal: totalBal
+                    })
                 })
                     .then(() => {
                         setUserVipLevel(result.value);
@@ -993,13 +1087,12 @@ const Member = ({ data, onDelete }) => {
                 <td className="border px-4 py-2">Invitation User: {userSuperviser}</td>
                 <td className="border px-4 py-2 font-semibold text-purple-600">{userVipLevel}</td>
                 <td className="border px-4 py-2">
-                    Wallet Balance: ${parseFloat(userTotalBal).toFixed(2)}<br />
-                    In Transit: $ 0<br />
-                    Frozen: ${user.frozenBal}<br />
-                    Status: {user.withdrawStatus ? "Active" : "Disable"}<br />
-                    Recharge: ${parseFloat(userTotalDeposit).toFixed(2)}<br />
-                    Withdraw: ${parseFloat(user.totalWithdraw).toFixed(2)}<br />
-                    System Profit: ${user.systemProfit}
+                    Wallet Balance: ৳{parseFloat(userTotalBal).toFixed(2)}<br />
+                    Training Balance: ৳ 0<br />
+                    Frozen: ৳{user.frozenBal}<br />
+                    Recharge: ৳{parseFloat(userTotalDeposit).toFixed(2)}<br />
+                    Withdraw: ৳{parseFloat(user.totalWithdraw).toFixed(2)}<br />
+                    System Profit: ৳{user.systemProfit}
                 </td>
                 <td className="border px-4 py-2">
                     Done task: {userTaskCount}<br />
@@ -1062,6 +1155,8 @@ const Member = ({ data, onDelete }) => {
 
 
                         <button onClick={handleAddMoney} className="bg-blue-500 text-white px-2 py-1 rounded">Add Money</button>
+
+                        <button onClick={handleTrainingMoney} className="bg-blue-500 text-white px-2 py-1 rounded">Add Training Money</button>
 
 
                         <button onClick={handleVipLevel} className="bg-blue-500 text-white px-2 py-1 rounded">VIP Level</button>
