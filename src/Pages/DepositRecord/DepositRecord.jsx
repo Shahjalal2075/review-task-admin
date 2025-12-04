@@ -22,7 +22,7 @@ const DepositRecord = () => {
           (a, b) => new Date(b.depositTime) - new Date(a.depositTime)
         );
         setData(sortedData);
-        setFilteredData(sortedData); // initially show all
+        setFilteredData([]); // initially show all
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -70,7 +70,7 @@ const DepositRecord = () => {
       startDate: '',
       endDate: '',
     });
-    setFilteredData(data);
+    setFilteredData([]);
     setCurrentPage(1);
   };
 

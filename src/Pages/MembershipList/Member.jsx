@@ -16,6 +16,7 @@ const Member = ({ data, onDelete }) => {
     const [userRefferStatus, setUserRefferStatus] = useState(data.invitationStatus);
     const [userWithdrawStatus, setUserWuserWithdrawStatus] = useState(data.withdrawStatus);
     const [userTotalBal, setUserTotalBal] = useState(data.totalBal);
+    const [userTrainingBal, setUserTrainingBal] = useState(data.trainingBal);
     const [userResetCount, setUserResetCount] = useState(data.resetCount);
     const [userTotalDeposit, setUserTotalDeposit] = useState(data.totalDeposit);
     const [userVipLevel, setUserVipLevel] = useState(data.vipLevel);
@@ -26,7 +27,6 @@ const Member = ({ data, onDelete }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [vipLevels, setVipLevels] = useState([]);
     const [targetTask, setTargetTask] = useState(0);
-
     useEffect(() => {
         let intervalId;
         console.log(userEmail);
@@ -458,7 +458,7 @@ const Member = ({ data, onDelete }) => {
               <div style="display: flex; align-items: center; margin-bottom: 12px;">
                 <label for="balancetype" style="width: 140px; color:#3b82f6;">📂 Balance Type</label>
                 <select id="balancetype" class="swal2-input" style="flex: 1; background-color:#e0f2fe; border-color:#3b82f6;">
-                  <option value="Deposit">💰 Training</option>
+                  <option value="Training">💰 Training</option>
                 </select>
               </div>
       
@@ -499,7 +499,7 @@ const Member = ({ data, onDelete }) => {
                     depositType: balancetype
                 }
                 const depositBal = {
-                    trainingBal: user.trainingBal+parseFloat(amount),
+                    trainingBal: user.trainingBal + parseFloat(amount),
                 }
 
                 fetch('https://review-task-server.vercel.app/deposit', {
@@ -517,6 +517,7 @@ const Member = ({ data, onDelete }) => {
                     body: JSON.stringify(depositBal)
                 })
                     .then(() => {
+                        setUserTrainingBal(userTrainingBal + parseFloat(amount));
                         MySwal.fire({
                             icon: 'success',
                             title: '🎉 Success!',
@@ -1075,7 +1076,7 @@ const Member = ({ data, onDelete }) => {
     return (
         <>
             <tr className="even:bg-gray-100">
-                <td className="border px-4 py-2 font-semibold text-blue-800">{user?.invitationCode}</td>
+                <td className="border rounded-2xl px-4 py-2 font-semibold text-blue-800">{user?.invitationCode}</td>
                 <td className="border px-4 py-2">
                     ID: {user?.invitationCode}<br />
                     Username: {user?.username}<br />
@@ -1088,7 +1089,7 @@ const Member = ({ data, onDelete }) => {
                 <td className="border px-4 py-2 font-semibold text-purple-600">{userVipLevel}</td>
                 <td className="border px-4 py-2">
                     Wallet Balance: ৳{parseFloat(userTotalBal).toFixed(2)}<br />
-                    Training Balance: ৳ 0<br />
+                    Training Balance: ৳{parseFloat(userTrainingBal).toFixed(2)}<br />
                     Frozen: ৳{user.frozenBal}<br />
                     Recharge: ৳{parseFloat(userTotalDeposit).toFixed(2)}<br />
                     Withdraw: ৳{parseFloat(user.totalWithdraw).toFixed(2)}<br />
@@ -1111,21 +1112,22 @@ const Member = ({ data, onDelete }) => {
                     Country: {user.loginInfo?.country ? user.loginInfo.country : ""}<br />
                     Time: {user.loginInfo?.time ? new Date(user.loginInfo.time).toLocaleString() : ""}
                 </td>
-
-                <td className="border px-4 py-2">
-                    <div className="flex flex-wrap gap-2 text-xs">
+            </tr>
+            <tr>
+                <td className="border px-4 py-2 col-span-3" colSpan="8">
+                    <div className="grid grid-cols-5 gap-4 ">
 
 
                         <button
                             onClick={handleFreezeAcc}
-                            className={`px-2 py-1 rounded text-white ${userFrozenStatus ? 'bg-yellow-600' : 'bg-blue-500'}`}
+                            className={`px-2 py-2 rounded text-white ${userFrozenStatus ? 'bg-yellow-600' : 'bg-blue-500'}`}
                         >
                             {userFrozenStatus ? 'Unfreeze Account' : 'Freeze Account'}
                         </button>
 
                         <button
                             onClick={handleWithdrawStatus}
-                            className={`px-2 py-1 rounded font-semibold text-white
+                            className={`px-2 py-2 rounded font-semibold text-white
     ${userWithdrawStatus ? 'bg-green-500 hover:bg-green-600' : 'bg-yellow-500 hover:bg-yellow-600'}
   `}
                         >
@@ -1135,7 +1137,7 @@ const Member = ({ data, onDelete }) => {
 
                         <button
                             onClick={handleRefferCodeStatus}
-                            className={`px-2 py-1 rounded text-white font-semibold
+                            className={`px-2 py-2 rounded text-white font-semibold
     ${userRefferStatus ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}
   `}
                         >
@@ -1143,33 +1145,33 @@ const Member = ({ data, onDelete }) => {
                         </button>
 
 
-                        <button onClick={handleModifyParent} className="bg-blue-500 text-white px-2 py-1 rounded">Modify Parent</button>
+                        <button onClick={handleModifyParent} className="bg-blue-500 text-white px-2 py-2 rounded">Modify Parent</button>
 
 
-                        <button onClick={handleCredibility} className="bg-blue-500 text-white px-2 py-1 rounded">Credibility</button>
+                        <button onClick={handleCredibility} className="bg-blue-500 text-white px-2 py-2 rounded">Credibility</button>
 
 
-                        <button onClick={handleLoginPass} className="bg-blue-500 text-white px-2 py-1 rounded">Login Pass</button>
+                        <button onClick={handleLoginPass} className="bg-blue-500 text-white px-2 py-2 rounded">Login Pass</button>
 
-                        <button onClick={handleWithdrawPassword} className="bg-blue-500 text-white px-2 py-1 rounded">Withdraw Password</button>
-
-
-                        <button onClick={handleAddMoney} className="bg-blue-500 text-white px-2 py-1 rounded">Add Money</button>
-
-                        <button onClick={handleTrainingMoney} className="bg-blue-500 text-white px-2 py-1 rounded">Add Training Money</button>
+                        <button onClick={handleWithdrawPassword} className="bg-blue-500 text-white px-2 py-2 rounded">Withdraw Password</button>
 
 
-                        <button onClick={handleVipLevel} className="bg-blue-500 text-white px-2 py-1 rounded">VIP Level</button>
+                        <button onClick={handleAddMoney} className="bg-blue-500 text-white px-2 py-2 rounded">Add Money</button>
 
-                        <button onClick={handleCombinationTask} className="bg-blue-500 text-white px-2 py-1 rounded">Combination Task</button>
+                        <button onClick={handleTrainingMoney} className="bg-blue-500 text-white px-2 py-2 rounded">Add Training Money</button>
 
-                        <button onClick={handleResetTask} className="bg-blue-500 text-white px-2 py-1 rounded">Reset Task</button>
 
-                        <button onClick={handleDelete} className="bg-red-500 text-white px-2 py-1 rounded flex items-center gap-1"><FaTrash /> Delete</button>
+                        <button onClick={handleVipLevel} className="bg-blue-500 text-white px-2 py-2 rounded">VIP Level</button>
 
-                        <button onClick={handlePersonalPromotion} className="bg-blue-500 text-white px-2 py-1 rounded">Personal Promotion</button>
+                        <button onClick={handleCombinationTask} className="bg-blue-500 text-white px-2 py-2 rounded">Combination Task</button>
 
-                        <button onClick={handleExtendTime} className="bg-blue-500 text-white px-2 py-1 rounded">Extend Time</button>
+                        <button onClick={handleResetTask} className="bg-blue-500 text-white px-2 py-2 rounded">Reset Task</button>
+
+                        <button onClick={handleDelete} className="bg-red-500 text-white px-2 py-2 rounded flex items-center justify-center gap-1"><FaTrash /> Delete</button>
+
+                        <button onClick={handlePersonalPromotion} className="bg-blue-500 text-white px-2 py-2 rounded">Personal Promotion</button>
+
+                        <button onClick={handleExtendTime} className="bg-blue-500 text-white px-2 py-2 rounded">Extend Time</button>
 
                     </div>
                 </td>

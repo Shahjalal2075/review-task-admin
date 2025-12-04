@@ -17,7 +17,7 @@ const UsdtAddress = () => {
       .then((res) => res.json())
       .then((resData) => {
         setData([...resData].reverse());
-        setFilteredData([...resData].reverse());
+        setFilteredData([]);
       });
   }, []);
 
@@ -53,7 +53,7 @@ const UsdtAddress = () => {
 
   return (
     <div className="p-6 bg-gradient-to-tr from-blue-50 to-purple-100 min-h-screen text-gray-800">
-      <h2 className="text-2xl font-bold mb-4 text-blue-800">USDT Address Record</h2>
+      <h2 className="text-2xl font-bold mb-4 text-blue-800">Wallet Address Record</h2>
 
       {/* Search Section */}
       <div className="flex flex-wrap gap-3 mb-6 bg-white p-4 rounded shadow-md">

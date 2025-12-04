@@ -66,7 +66,7 @@ const WithdrawRecord = () => {
         .sort((a, b) => new Date(b.submissionTime) - new Date(a.submissionTime));
 
       setOriginalData(formattedData);
-      setFilteredData(formattedData);
+      setFilteredData([]);
     } catch (err) {
       console.error("Fetch failed:", err);
       setError("Failed to load records. Please try again later.");
@@ -119,7 +119,7 @@ const WithdrawRecord = () => {
       startDate: '',
       endDate: '',
     });
-    setFilteredData(originalData);
+    setFilteredData([]);
     setCurrentPage(1);
   };
 

@@ -6,6 +6,7 @@ import Member from './Member';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import { AuthContext } from '../../Providers/AuthProvider';
+import { Plus, RefreshCcw, Search } from 'lucide-react';
 
 const MembershipList = () => {
 
@@ -14,29 +15,27 @@ const MembershipList = () => {
   const MySwal = withReactContent(Swal);
   const [allData, setAllData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
+  const [hasSearched, setHasSearched] = useState(false);
   const [searchData, setSearchData] = useState({
     memberId: '',
     memberAccount: '',
     mobileNumber: '',
+    emailAddress: '',
     inviterId: '',
     invitationCode: '',
-    ipAddress: '',
-    startDate: '',
-    endDate: '',
-    accountStatus: '',
-    vipLevel: ''
   });
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       try {
         const response = await fetch('https://review-task-server.vercel.app/user-list');
         const data = await response.json();
         const reversedData = data.reverse();
         setAllData(reversedData);
-        setFilteredData(reversedData);
+        setFilteredData([]);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching member data:', error);
@@ -203,26 +202,28 @@ const MembershipList = () => {
   };
 
   const handleSearch = () => {
-    const result = allData.filter((item) => {
-      const registrationDate = item.resetTime ? new Date(item.resetTime) : null;
-      const start = searchData.startDate ? new Date(searchData.startDate) : null;
-      const end = searchData.endDate ? new Date(searchData.endDate) : null;
+    const hasValue = Object.values(searchData).some(val => val.trim() !== '');
 
-      return (
-        (!searchData.memberId || item.invitationCode.toString().includes(searchData.memberId)) &&
-        (!searchData.memberAccount || item.username?.toLowerCase().includes(searchData.memberAccount.toLowerCase())) &&
-        (!searchData.mobileNumber || item.phone?.includes(searchData.mobileNumber)) &&
-        (!searchData.inviterId || item.superviser?.toString().includes(searchData.inviterId)) &&
-        (!searchData.invitationCode || item.invitationCode?.includes(searchData.invitationCode)) &&
-        (!searchData.accountStatus ||
-          (searchData.accountStatus === 'Normal' && item.frozenStatus === false) ||
-          (searchData.accountStatus === 'Prohibited' && item.frozenStatus === true)) &&
-        (!searchData.vipLevel || item.vipLevel?.toLowerCase() === searchData.vipLevel.toLowerCase()) &&
-        (!start || (registrationDate && registrationDate >= start)) &&
-        (!end || (registrationDate && registrationDate <= end))
-      );
+    if (!hasValue) {
+      toast.warn("Please enter at least one field to search");
+      setFilteredData([]);
+      setHasSearched(false);
+      return;
+    }
+
+    const result = allData.filter((item) => {
+      const matchId = searchData.memberId ? item.invitationCode?.toString() === searchData.memberId.trim() : true;
+      const matchAccount = searchData.memberAccount ? item.username === searchData.memberAccount.trim() : true;
+      const matchMobile = searchData.mobileNumber ? item.phone === searchData.mobileNumber.trim() : true;
+      const matchEmail = searchData.emailAddress ? item.email === searchData.emailAddress.trim() : true;
+      const matchInviter = searchData.inviterId ? item.superviser?.toString() === searchData.inviterId.trim() : true;
+      const matchInvitationCode = searchData.invitationCode ? item.invitationCode?.toString() === searchData.invitationCode.trim() : true;
+
+      return matchId && matchAccount && matchMobile && matchEmail && matchInviter && matchInvitationCode;
     });
+
     setFilteredData(result);
+    setHasSearched(true);
     setCurrentPage(1);
   };
 
@@ -232,15 +233,12 @@ const MembershipList = () => {
       memberId: '',
       memberAccount: '',
       mobileNumber: '',
+      emailAddress: '',
       inviterId: '',
       invitationCode: '',
-      ipAddress: '',
-      startDate: '',
-      endDate: '',
-      accountStatus: '',
-      vipLevel: ''
     });
-    setFilteredData(allData);
+    setFilteredData([]);
+    setHasSearched(false);
     setCurrentPage(1);
   };
 
@@ -262,7 +260,6 @@ const MembershipList = () => {
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
   if (isLoading) {
     return (
@@ -276,97 +273,67 @@ const MembershipList = () => {
     <div className="p-4 max-w-full overflow-x-auto">
       <h3 className="text-2xl font-bold text-center mb-6 text-blue-800">Member List</h3>
 
-      {/* Search Filters */}
-      <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-4">
-        <input name="memberId" onChange={handleChange} value={searchData.memberId} placeholder="Member ID" className="border p-2 rounded" />
-        <input name="memberAccount" onChange={handleChange} value={searchData.memberAccount} placeholder="Member Account" className="border p-2 rounded" />
-        <select name="accountStatus" onChange={handleChange} value={searchData.accountStatus} className="border p-2 rounded">
-          <option value="">All account statuses</option>
-          <option value="Normal">Normal</option>
-          <option value="Prohibited">Prohibited</option>
-        </select>
-        <select name="vipLevel" onChange={handleChange} value={searchData.vipLevel} className="border p-2 rounded">
-          <option value="">All members</option>
-          <option value="vip1">vip1</option>
-          <option value="vip2">vip2</option>
-          <option value="vip3">vip3</option>
-          <option value="vip4">vip4</option>
-        </select>
-        <input name="mobileNumber" onChange={handleChange} value={searchData.mobileNumber} placeholder="Mobile Number" className="border p-2 rounded" />
-        <input name="inviterId" onChange={handleChange} value={searchData.inviterId} placeholder="Inviter ID" className="border p-2 rounded" />
-        <input name="invitationCode" onChange={handleChange} value={searchData.invitationCode} placeholder="Invitation Code" className="border p-2 rounded" />
-        <input name="ipAddress" onChange={handleChange} value={searchData.ipAddress} placeholder="IP Address" className="border p-2 rounded" />
-        <div className="col-span-2 flex items-center gap-2">
-          <input type="date" name="startDate" onChange={handleChange} value={searchData.startDate} className="border p-2 rounded w-full" />
-          <span>-</span>
-          <input type="date" name="endDate" onChange={handleChange} value={searchData.endDate} className="border p-2 rounded w-full" />
+      {/* --- Search Panel --- */}
+      <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-4">
+          <input name="memberId" onChange={handleChange} value={searchData.memberId} placeholder="Member ID" className="border p-2 rounded focus:ring-2 focus:ring-blue-300 outline-none transition" />
+          <input name="memberAccount" onChange={handleChange} value={searchData.memberAccount} placeholder="Member Account" className="border p-2 rounded focus:ring-2 focus:ring-blue-300 outline-none transition" />
+          <input name="mobileNumber" onChange={handleChange} value={searchData.mobileNumber} placeholder="Mobile Number" className="border p-2 rounded focus:ring-2 focus:ring-blue-300 outline-none transition" />
+          <input name="emailAddress" onChange={handleChange} value={searchData.emailAddress} placeholder="Email Address" className="border p-2 rounded focus:ring-2 focus:ring-blue-300 outline-none transition" />
+          <input name="inviterId" onChange={handleChange} value={searchData.inviterId} placeholder="Inviter ID" className="border p-2 rounded focus:ring-2 focus:ring-blue-300 outline-none transition" />
+          <input name="invitationCode" onChange={handleChange} value={searchData.invitationCode} placeholder="Invitation Code" className="border p-2 rounded focus:ring-2 focus:ring-blue-300 outline-none transition" />
         </div>
-        <div className="flex gap-2 col-span-2">
-          <button onClick={handleSearch} className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded shadow">Search</button>
-          <button onClick={handleAddMember} className="bg-gradient-to-r from-green-400 to-emerald-600 text-white px-4 py-2 rounded shadow flex items-center gap-1"><FaPlus /> Add Member</button>
-          <button onClick={handleReset} className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 rounded shadow flex items-center gap-1"><FaSync /> Reset</button>
+
+        <div className="flex gap-3 justify-center">
+          <button onClick={handleSearch} className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-6 py-2.5 rounded-lg shadow hover:opacity-90 flex items-center gap-2">
+            <Search size={18} /> Search
+          </button>
+          <button onClick={handleAddMember} className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-6 py-2.5 rounded-lg shadow hover:opacity-90 flex items-center gap-2">
+            <Plus size={18} /> Add Member
+          </button>
+          <button onClick={handleReset} className="bg-gray-500 text-white px-6 py-2.5 rounded-lg shadow hover:opacity-90 flex items-center gap-2">
+            <RefreshCcw size={18} /> Reset
+          </button>
         </div>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto rounded-xl shadow-md">
-        <table className="min-w-full table-auto border border-gray-300 text-sm">
-          <thead>
-            <tr className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-              <th className="border px-4 py-2">ID</th>
-              <th className="border px-4 py-2">Member Info</th>
-              <th className="border px-4 py-2">Superior Info</th>
-              <th className="border px-4 py-2">VIP Level</th>
-              <th className="border px-4 py-2">Wallet Info</th>
-              <th className="border px-4 py-2">Task Info</th>
-              <th className="border px-4 py-2">Registration Info</th>
-              <th className="border px-4 py-2">Last Login Info</th>
-              <th className="border px-4 py-2">Operation</th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedData.map((user) => (
-              <Member
-                key={user._id}
-                data={user}
-                onDelete={handleDelete}
-              ></Member>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Pagination */}
-      <div className="mt-6 flex justify-center flex-wrap gap-2">
-        {currentPage > 3 && (
-          <>
-            <button onClick={() => setCurrentPage(1)} className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300">1</button>
-            <span className="px-2 text-gray-500">...</span>
-          </>
-        )}
-
-        {Array.from({ length: totalPages }, (_, i) => i + 1)
-          .filter(page => page === 1 || page === totalPages || (page >= currentPage - 2 && page <= currentPage + 2))
-          .map((page) => (
-            <button
-              key={page}
-              onClick={() => setCurrentPage(page)}
-              className={`px-3 py-1 rounded transition-all ${currentPage === page ? 'bg-blue-600 text-white font-bold shadow' : 'bg-gray-200 hover:bg-gray-300'}`}
-            >
-              {page}
-            </button>
-          ))}
-
-        {currentPage < totalPages - 2 && (
-          <>
-            <span className="px-2 text-gray-500">...</span>
-            <button onClick={() => setCurrentPage(totalPages)} className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300">{totalPages}</button>
-          </>
-        )}
-      </div>
+      {/* --- Results Area --- */}
+      {!hasSearched ? (
+        <div className="text-center text-gray-500 mt-12 bg-white p-10 rounded-lg border border-dashed border-gray-300">
+          <Search className="mx-auto text-gray-300 mb-3" size={48} />
+          <p className="text-lg">Please use the search bar to find a member.</p>
+        </div>
+      ) : filteredData.length === 0 ? (
+        <div className="text-center bg-red-50 p-8 rounded-lg border border-red-100 mt-6">
+          <p className="text-red-500 font-bold text-xl">User not found</p>
+          <p className="text-red-400 text-sm mt-1">Please check your search criteria (Exact Match Required)</p>
+        </div>
+      ) : (
+        <>
+          <div className="overflow-x-auto rounded-xl shadow-lg border border-gray-200 bg-[white]">
+            <table className="min-w-full table-auto text-sm">
+              <thead className="bg-gradient-to-r from-blue-600 to-purple-700 text-white">
+                <tr>
+                  <th className="px-4 py-3 text-left">ID</th>
+                  <th className="px-4 py-3 text-left">Member Info</th>
+                  <th className="px-4 py-3 text-left">Superior</th>
+                  <th className="px-4 py-3 text-center">VIP</th>
+                  <th className="px-4 py-3 text-left">Wallet</th>
+                  <th className="px-4 py-3 text-center">Tasks</th>
+                  <th className="px-4 py-3 text-left">Registration</th>
+                  <th className="px-4 py-3 text-left">Login</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {paginatedData.map((user) => (
+                  <Member key={user._id} data={user} onDelete={handleDelete} />
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
       <ToastContainer />
-
-
     </div>
   );
 };
