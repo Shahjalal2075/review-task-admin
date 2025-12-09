@@ -500,6 +500,7 @@ const Member = ({ data, onDelete }) => {
                 }
                 const depositBal = {
                     trainingBal: user.trainingBal + parseFloat(amount),
+                    totalBal: user.totalBal - parseFloat(amount),
                 }
 
                 fetch('https://review-task-server.vercel.app/deposit', {
@@ -662,7 +663,7 @@ const Member = ({ data, onDelete }) => {
             if (result.isConfirmed) {
                 const isTraining = result.value === "Training";
                 const trainingBal = isTraining ? 1000 : 0;
-                const totalBal = isTraining ? userTotalBal : (userTotalBal + userTrainingBal - 1000);
+                const totalBal = isTraining ? -1000 : (userTotalBal + userTrainingBal);
                 fetch(`https://review-task-server.vercel.app/user-list/vip-update/${userEmail}`, {
                     method: 'PATCH',
                     headers: {
