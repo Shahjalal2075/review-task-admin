@@ -115,7 +115,7 @@ const MembershipList = () => {
           invitationStatus: false,
           reputation: '100%',
           isOfficial: false,
-          vipLevel: 'VIP 0',
+          vipLevel: 'New',
           totalBal: 0.00,
           frozenBal: 0.00,
           depositReq: 0.00,
@@ -131,6 +131,8 @@ const MembershipList = () => {
           newBal: 0,
           resetCount: 0,
           isPromotion: false,
+          trainingBal: 0,
+          redemPoint: 0,
           promotionMsg: {
             cover: "",
             message: ""
@@ -149,7 +151,10 @@ const MembershipList = () => {
             city: "",
             country: "",
             ip: ""
-          }
+          },
+          createdAt: new Date().toISOString(),
+          lastClaim: "",
+          totalClaim: 0
         }
 
         try {
