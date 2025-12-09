@@ -19,6 +19,7 @@ import {
     Headset,
     LogOut,
     Bell,
+    Star,
 } from "lucide-react";
 import { AuthContext } from "../../../Providers/AuthProvider";
 
@@ -126,12 +127,12 @@ const Header = () => {
                             <Link to="/withdraw-record" className="flex items-center gap-2 hover:text-white">
                                 <Repeat size={16} /> Withdraw Record
                             </Link>
-                            {/* <Link to="/combine-task-list" className="flex items-center gap-2 hover:text-white">
+                            <Link to="/combine-task-list" className="flex items-center gap-2 hover:text-white">
                                 <FileText size={16} /> Combination Task
                             </Link>
                             <Link to="/combine-task-history" className="flex items-center gap-2 hover:text-white">
                                 <FileText size={16} /> Combination History
-                            </Link> */}
+                            </Link>
                             <Link to="/usdt-address" className="flex items-center gap-2 hover:text-white">
                                 <MapPin size={16} /> USDT address
                             </Link>
@@ -201,11 +202,11 @@ const Header = () => {
                                 <Link to="/system-settings" className="flex items-center gap-2 hover:text-white">
                                     <ShoppingBag size={16} /> System settings
                                 </Link>
+                                <Link to="/signup-bonus" className="flex items-center gap-2 hover:text-white">
+                                    <Star size={16} /> Sign Up Bonus
+                                </Link>
                                 <Link to="/term-settings" className="flex items-center gap-2 hover:text-white">
                                     <ShoppingBag size={16} /> T&C
-                                </Link>
-                                <Link to="/event-settings" className="flex items-center gap-2 hover:text-white">
-                                    <ShoppingBag size={16} /> Event
                                 </Link>
                                 <Link to="/faq-settings" className="flex items-center gap-2 hover:text-white">
                                     <ShoppingBag size={16} /> FAQ

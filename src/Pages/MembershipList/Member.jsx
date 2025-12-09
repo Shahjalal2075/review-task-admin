@@ -662,7 +662,7 @@ const Member = ({ data, onDelete }) => {
             if (result.isConfirmed) {
                 const isTraining = result.value === "Training";
                 const trainingBal = isTraining ? 1000 : 0;
-                const totalBal = isTraining ? userTotalBal : userTotalBal + trainingBal;
+                const totalBal = isTraining ? userTotalBal : (userTotalBal + userTrainingBal - 1000);
                 fetch(`https://review-task-server.vercel.app/user-list/vip-update/${userEmail}`, {
                     method: 'PATCH',
                     headers: {
@@ -676,6 +676,8 @@ const Member = ({ data, onDelete }) => {
                 })
                     .then(() => {
                         setUserVipLevel(result.value);
+                        setUserTotalBal(totalBal);
+                        setUserTrainingBal(trainingBal);
                         Swal.fire({
                             icon: 'success',
                             title: '🎉 VIP Level Updated!',

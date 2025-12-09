@@ -134,7 +134,7 @@ const CombineTaskList = () => {
                                         >
                                             <td className="border px-4 py-2">{index + 1}</td>
                                             <td className="border px-4 py-2">{item.product_id}</td>
-                                            <td className="border px-4 py-2">${item.amount}</td>
+                                            <td className="border px-4 py-2">৳{item.price}</td>
                                         </tr>
                                     ))}
                                 </tbody>

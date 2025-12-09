@@ -59,7 +59,7 @@ const CombinationTask = ({ user, onClose }) => {
     let filtered = tasks.filter((task) => {
       const titleMatch = task.title?.toLowerCase().includes(productTitleFilter.toLowerCase());
       const idMatch = task._id?.includes(productIdFilter);
-      const price = parseFloat(task.amount);
+      const price = parseFloat(task.price);
       const min = minPrice ? parseFloat(minPrice) : 0;
       const max = maxPrice ? parseFloat(maxPrice) : Infinity;
       const priceMatch = price >= min && price <= max;
@@ -73,9 +73,9 @@ const CombinationTask = ({ user, onClose }) => {
     });
 
     if (sortOption === 'asc') {
-      filtered.sort((a, b) => parseFloat(a.amount) - parseFloat(b.amount));
+      filtered.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
     } else if (sortOption === 'desc') {
-      filtered.sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount));
+      filtered.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
     }
 
     setFilteredTasks(filtered);
@@ -103,7 +103,7 @@ const CombinationTask = ({ user, onClose }) => {
     const updatedFilteredTasks = updatedTasks.filter((task) => {
       const titleMatch = task.title?.toLowerCase().includes(productTitleFilter.toLowerCase());
       const idMatch = task._id?.includes(productIdFilter);
-      const price = parseFloat(task.amount);
+      const price = parseFloat(task.price);
       const min = minPrice ? parseFloat(minPrice) : 0;
       const max = maxPrice ? parseFloat(maxPrice) : Infinity;
       const priceMatch = price >= min && price <= max;
@@ -132,7 +132,7 @@ const CombinationTask = ({ user, onClose }) => {
       return;
     }
 
-    const amounts = selectedTasks.map(task => parseFloat(task.amount));
+    const amounts = selectedTasks.map(task => parseFloat(task.price));
     const amountSums = [];
     let cumulative = 0;
     for (let i = 0; i < amounts.length && i < 10; i++) {
@@ -272,7 +272,7 @@ const CombinationTask = ({ user, onClose }) => {
                     </td>
                     <td className="p-2 border">{task.product_id}</td>
                     <td className="p-2 border">{task.title}</td>
-                    <td className="p-2 border">${task.amount}</td>
+                    <td className="p-2 border">৳{task.price}</td>
                     <td className="p-2 border">{task.creationTime}</td>
                     <td className="p-2 border">
                       <img src={task.cover} alt="cover" className="w-16 h-16 object-cover rounded shadow" />

@@ -26,6 +26,7 @@ import Faq from "../Pages/Faq/Faq";
 import CheckRoute from "./CheckRoute";
 import CombineTaskHistory from "../Pages/CombineTaskHistory/CombineTaskHistory";
 import CombineTaskList from "../Pages/CombineTaskList/CombineTaskList";
+import SignupBonus from "../Pages/SignupBonus/SignupBonus";
 
 
 const Routes = createBrowserRouter([
@@ -93,6 +94,10 @@ const Routes = createBrowserRouter([
       {
         path: "/commission-settings",
         element: <CommissionSettings></CommissionSettings>
+      },
+      {
+        path: "/signup-bonus",
+        element: <SignupBonus></SignupBonus>
       },
       {
         path: "/announcement",
