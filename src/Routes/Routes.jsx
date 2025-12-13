@@ -27,6 +27,8 @@ import CheckRoute from "./CheckRoute";
 import CombineTaskHistory from "../Pages/CombineTaskHistory/CombineTaskHistory";
 import CombineTaskList from "../Pages/CombineTaskList/CombineTaskList";
 import SignupBonus from "../Pages/SignupBonus/SignupBonus";
+import RewardTaskList from "../Pages/RewardTaskList/RewardTaskList";
+import RewardTaskHistory from "../Pages/RewardTaskHistory/RewardTaskHistory";
 
 
 const Routes = createBrowserRouter([
@@ -50,6 +52,14 @@ const Routes = createBrowserRouter([
       {
         path: "/combine-task-history",
         element: <CombineTaskHistory></CombineTaskHistory>
+      },
+      {
+        path: "/reward-task-list",
+        element: <RewardTaskList></RewardTaskList>
+      },
+      {
+        path: "/reward-task-history",
+        element: <RewardTaskHistory></RewardTaskHistory>
       },
       {
         path: "/deposit-record",

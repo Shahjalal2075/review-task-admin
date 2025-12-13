@@ -131,10 +131,16 @@ const Header = () => {
                                 <FileText size={16} /> Combination Task
                             </Link>
                             <Link to="/combine-task-history" className="flex items-center gap-2 hover:text-white">
-                                <FileText size={16} /> Combination History
+                                <FileText size={16} /> Combination Task History
+                            </Link>
+                            <Link to="/reward-task-list" className="flex items-center gap-2 hover:text-white">
+                                <FileText size={16} /> Reward Task
+                            </Link>
+                            <Link to="/reward-task-history" className="flex items-center gap-2 hover:text-white">
+                                <FileText size={16} /> Reward Task History
                             </Link>
                             <Link to="/usdt-address" className="flex items-center gap-2 hover:text-white">
-                                <MapPin size={16} /> USDT address
+                                <MapPin size={16} /> Wallet address
                             </Link>
                             <Link to="/task-record" className="flex items-center gap-2 hover:text-white">
                                 <ShoppingBag size={16} /> Task Record

@@ -182,7 +182,7 @@ const CombinationTask = ({ user, onClose }) => {
         <div><strong>Username:</strong> <span className="text-blue-700">{user.username}</span></div>
         <div><strong>Wallet balance:</strong> <span className="text-red-600">${user.totalBal.toFixed(2)}</span></div>
 
-        <div><strong>Order schedule:</strong> {user.taskCount}</div>
+        <div><strong>Task Running:</strong> {user.taskCount}</div>
 
         <div className="space-y-2">
           <div>

@@ -5,6 +5,8 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import CombinationTask from '../CombinationTask/CombinationTask';
 import { AuthContext } from '../../Providers/AuthProvider';
+import { toast } from 'react-toastify';
+import RewardTask from '../RewardTask/RewardTask';
 
 const Member = ({ data, onDelete }) => {
     const { userAccount } = useContext(AuthContext);
@@ -24,7 +26,8 @@ const Member = ({ data, onDelete }) => {
     const [userTaskCount, setUserTaskCount] = useState(data.taskCount);
     const [userReputation, setUserReputation] = useState(data.reputation);
     const [userTimeExtend, setUserTimeExtend] = useState(data.combinationEndTine);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModal1Open, setIsModal1Open] = useState(false);
+    const [isModal2Open, setIsModal2Open] = useState(false);
     const [vipLevels, setVipLevels] = useState([]);
     const [targetTask, setTargetTask] = useState(0);
     useEffect(() => {
@@ -81,11 +84,25 @@ const Member = ({ data, onDelete }) => {
 
 
     const handleCombinationTask = () => {
-        setIsModalOpen(true);
+        if (userVipLevel === "Training") {
+            toast("Combination tasks cannot be set on a Training account.");
+            return;
+        }
+        setIsModal1Open(true);
+    };
+    const handleRewardCombinationTask = () => {
+        if (userVipLevel === "Training") {
+            toast("Combination tasks cannot be set on a Training account.");
+            return;
+        }
+        setIsModal2Open(true);
     };
 
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
+    const handleCloseModal1 = () => {
+        setIsModal1Open(false);
+    };
+    const handleCloseModal2 = () => {
+        setIsModal2Open(false);
     };
 
 
@@ -349,6 +366,10 @@ const Member = ({ data, onDelete }) => {
     }
 
     const handleAddMoney = () => {
+        if (userVipLevel === "Training") {
+            toast("This is a Training account.");
+            return;
+        }
         MySwal.fire({
             title: `<span style="color:#4f46e5;">💸 Add Balance</span>`,
             html: `
@@ -444,6 +465,10 @@ const Member = ({ data, onDelete }) => {
     };
 
     const handleTrainingMoney = () => {
+        if (userVipLevel !== "Training") {
+            toast("This is not a Training account.");
+            return;
+        }
         MySwal.fire({
             title: `<span style="color:#4f46e5;">💸 Add Balance</span>`,
             html: `
@@ -1168,6 +1193,8 @@ const Member = ({ data, onDelete }) => {
 
                         <button onClick={handleCombinationTask} className="bg-blue-500 text-white px-2 py-2 rounded">Combination Task</button>
 
+                        <button onClick={handleRewardCombinationTask} className="bg-blue-500 text-white px-2 py-2 rounded">Reward Task</button>
+
                         <button onClick={handleResetTask} className="bg-blue-500 text-white px-2 py-2 rounded">Reset Task</button>
 
                         <button onClick={handleDelete} className="bg-red-500 text-white px-2 py-2 rounded flex items-center justify-center gap-1"><FaTrash /> Delete</button>
@@ -1179,10 +1206,17 @@ const Member = ({ data, onDelete }) => {
                     </div>
                 </td>
             </tr>
-            {isModalOpen && (
+            {isModal1Open && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black bg-opacity-50">
                     <div className="bg-white w-full max-h-screen overflow-auto p-4 rounded shadow-lg">
-                        <CombinationTask user={user} onClose={handleCloseModal} />
+                        <CombinationTask user={user} onClose={handleCloseModal1} />
+                    </div>
+                </div>
+            )}
+            {isModal2Open && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black bg-opacity-50">
+                    <div className="bg-white w-full max-h-screen overflow-auto p-4 rounded shadow-lg">
+                        <RewardTask user={user} onClose={handleCloseModal2} />
                     </div>
                 </div>
             )}

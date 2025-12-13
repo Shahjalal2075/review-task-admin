@@ -106,9 +106,6 @@ const UsdtAddress = () => {
                   <div>Address: {item.walletAddress}</div>
                 </td>
                 <td className="p-3 text-center space-x-2">
-                  <button onClick={() => handleEditWallet(item)} className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
-                    Edit
-                  </button>
                   <button onClick={() => handleDelete(item._id)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
                     Delete
                   </button>
