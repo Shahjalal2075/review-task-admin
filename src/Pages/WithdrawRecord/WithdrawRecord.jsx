@@ -37,8 +37,30 @@ const WithdrawRecord = () => {
   ];
 
   const formatDate = (dateStr) => {
+    if (!dateStr) return '-';
+    // If it's already in the custom format "DD/MM/YYYY, HH:mm:ss", just return it
+    if (dateStr.includes('/')) return dateStr;
+    
     const date = new Date(dateStr);
     return isNaN(date) ? '-' : date.toLocaleString();
+  };
+
+  // Helper function to parse "DD/MM/YYYY, HH:mm:ss" to JS Date object
+  const parseDateStr = (dateStr) => {
+    if (!dateStr) return null;
+    try {
+      // Check if it matches "DD/MM/YYYY, HH:mm:ss" format
+      if (dateStr.includes(',')) {
+        const [datePart, timePart] = dateStr.split(', ');
+        const [day, month, year] = datePart.split('/');
+        // Note: Month is 0-indexed in JS Date
+        return new Date(`${year}-${month}-${day}T${timePart}`);
+      }
+      // Fallback for standard ISO strings
+      return new Date(dateStr);
+    } catch (e) {
+      return null;
+    }
   };
 
   const fetchData = useCallback(async () => {
@@ -47,26 +69,33 @@ const WithdrawRecord = () => {
       const response = await fetch('https://review-task-server.vercel.app/withdraw');
       const data = await response.json();
       const formattedData = data
-        .map((item, index) => ({
-          id: item._id,
-          memberId: data.length - index,
-          account: `${item.username}`,
-          phone: item.phone,
-          email: item.email,
-          type: 'TRX',
-          cashWithdraw: Number(item.amount),
-          paymentAmount: Number(item.amount),
-          handlingFee: parseFloat((Number(item.amount) * 0.05).toFixed(2)),
-          submissionTime: item.submissionTime,
-          auditTime: item.auditTime,
-          wallet: item.wallet,
-          status: item.status.toLowerCase(),
-          operator: item.operator === 'None' ? '-' : item.operator,
-        }))
-        .sort((a, b) => new Date(b.submissionTime) - new Date(a.submissionTime));
+        .map((item, index) => {
+           // Parse the date strictly for sorting
+           const parsedDate = parseDateStr(item.submissionTime);
+           
+           return {
+            id: item._id,
+            memberId: data.length - index,
+            account: `${item.username}`,
+            phone: item.phone,
+            email: item.email,
+            type: item.type || 'TRX', // Use item.type if available
+            cashWithdraw: Number(item.amount),
+            paymentAmount: Number(item.amount),
+            handlingFee: parseFloat((Number(item.amount) * 0.05).toFixed(2)),
+            submissionTime: item.submissionTime, // Keep original string for display
+            parsedSubmissionTime: parsedDate, // Store object for sorting/filtering
+            auditTime: item.auditTime,
+            wallet: item.wallet,
+            status: item.status.toLowerCase(),
+            operator: item.operator === 'None' ? '-' : item.operator,
+          };
+        })
+        // Sort by parsedSubmissionTime (Newest first)
+        .sort((a, b) => b.parsedSubmissionTime - a.parsedSubmissionTime);
 
       setOriginalData(formattedData);
-      setFilteredData([]);
+      setFilteredData(formattedData);
     } catch (err) {
       console.error("Fetch failed:", err);
       setError("Failed to load records. Please try again later.");
@@ -96,15 +125,22 @@ const WithdrawRecord = () => {
 
   const handleSearch = () => {
     const result = originalData.filter((item) => {
-      const submissionDate = new Date(item.submissionTime);
+      // Use the parsed date object we created during mapping
+      const submissionDate = item.parsedSubmissionTime;
+      
+      // Setup filter dates (Start of day for start date, End of day for end date)
       const startDate = filters.startDate ? new Date(filters.startDate) : null;
-      const endDate = filters.endDate ? new Date(filters.endDate + 'T23:59:59') : null;
+      if (startDate) startDate.setHours(0, 0, 0, 0);
+
+      const endDate = filters.endDate ? new Date(filters.endDate) : null;
+      if (endDate) endDate.setHours(23, 59, 59, 999);
+
       return (
         (!filters.memberId || item.memberId.toString().includes(filters.memberId)) &&
         (!filters.account || item.account.toLowerCase().includes(filters.account.toLowerCase())) &&
         (!filters.status || item.status === filters.status) &&
-        (!startDate || submissionDate >= startDate) &&
-        (!endDate || submissionDate <= endDate)
+        (!startDate || (submissionDate && submissionDate >= startDate)) &&
+        (!endDate || (submissionDate && submissionDate <= endDate))
       );
     });
     setFilteredData(result);
@@ -119,7 +155,7 @@ const WithdrawRecord = () => {
       startDate: '',
       endDate: '',
     });
-    setFilteredData([]);
+    setFilteredData(originalData);
     setCurrentPage(1);
   };
 
@@ -181,6 +217,11 @@ const WithdrawRecord = () => {
 
       toast.success(`Status updated to ${newStatus}`);
       setFilteredData(prev =>
+        prev.map(row =>
+          row.id === item.id ? { ...row, status: newStatus } : row
+        )
+      );
+      setOriginalData(prev =>
         prev.map(row =>
           row.id === item.id ? { ...row, status: newStatus } : row
         )
@@ -255,7 +296,7 @@ const WithdrawRecord = () => {
                 <td className="p-2 border">{item.type}</td>
                 <td className="p-2 border text-blue-600 font-semibold">{item.cashWithdraw}</td>
                 <td className="p-2 border">{item.paymentAmount}</td>
-                <td className="p-2 border">{formatDate(item.submissionTime)}</td>
+                <td className="p-2 border">{item.submissionTime}</td>
                 <td className="p-2 border">{formatDate(item.auditTime)}</td>
                 <td className="p-2 border cursor-pointer hover:bg-indigo-100 transition rounded text-indigo-700 font-mono" onClick={() => handleCopyWallet(item.wallet, item.id)} title="Click to copy">
                   {item.wallet}
