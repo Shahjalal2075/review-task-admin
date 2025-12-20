@@ -11,6 +11,7 @@ import RewardTask from '../RewardTask/RewardTask';
 const Member = ({ data, onDelete }) => {
     const { userAccount } = useContext(AuthContext);
     const navigate = useNavigate();
+    const [copied, setCopied] = useState(false);
     const userEmail = ((data.email === '') ? data.phone : data.email);
     const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useState(null);
@@ -64,6 +65,14 @@ const Member = ({ data, onDelete }) => {
     useEffect(() => {
         fetchVipLevels();
     }, []);
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(`${user.password}`).then(() => {
+            setCopied(true);
+            toast('Password Copied.')
+            setTimeout(() => setCopied(false), 2000);
+        });
+    };
 
     const fetchVipLevels = async () => {
         try {
@@ -421,9 +430,16 @@ const Member = ({ data, onDelete }) => {
                 const timestamp = new Date().toISOString();
                 const deposit = {
                     username: user.username,
+                    phone: user.phone,
+                    email: user.email,
+                    type: "admin",
+                    agent: userAccount,
                     amount,
-                    status: "Success",
-                    depositTime: timestamp,
+                    status: "Approved",
+                    submissionTime: timestamp,
+                    auditTime: timestamp,
+                    trxID: "",
+                    senderNumber: "",
                     operator: userAccount,
                     depositType: balancetype
                 }
@@ -517,9 +533,16 @@ const Member = ({ data, onDelete }) => {
                 const timestamp = new Date().toISOString();
                 const deposit = {
                     username: user.username,
+                    phone: user.phone,
+                    email: user.email,
+                    type: "admin",
+                    agent: userAccount,
                     amount,
-                    status: "Success",
-                    depositTime: timestamp,
+                    status: "Approved",
+                    submissionTime: timestamp,
+                    auditTime: timestamp,
+                    trxID: "",
+                    senderNumber: "",
                     operator: userAccount,
                     depositType: balancetype
                 }
@@ -1202,6 +1225,8 @@ const Member = ({ data, onDelete }) => {
                         <button onClick={handlePersonalPromotion} className="bg-blue-500 text-white px-2 py-2 rounded">Personal Promotion</button>
 
                         <button onClick={handleExtendTime} className="bg-blue-500 text-white px-2 py-2 rounded">Extend Time</button>
+
+                        <button onClick={handleCopy} className="bg-blue-500 text-white px-2 py-2 rounded">Copy Password</button>
 
                     </div>
                 </td>

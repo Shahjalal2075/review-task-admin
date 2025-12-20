@@ -22,6 +22,8 @@ import {
     Star,
 } from "lucide-react";
 import { AuthContext } from "../../../Providers/AuthProvider";
+import { IoIdCard } from "react-icons/io5";
+import { TbCoinTaka } from "react-icons/tb";
 
 const Header = () => {
     const navigate = useNavigate();
@@ -139,6 +141,9 @@ const Header = () => {
                             <Link to="/reward-task-history" className="flex items-center gap-2 hover:text-white">
                                 <FileText size={16} /> Reward Task History
                             </Link>
+                            <Link to="/kyc" className="flex items-center gap-2 hover:text-white">
+                                <IoIdCard size={16} /> KYC Verify
+                            </Link>
                             <Link to="/usdt-address" className="flex items-center gap-2 hover:text-white">
                                 <MapPin size={16} /> Wallet address
                             </Link>
@@ -196,6 +201,9 @@ const Header = () => {
                                 <Link to="/product-management" className="flex items-center gap-2 hover:text-white">
                                     <Archive size={16} /> Product management
                                 </Link>
+                                <Link to="/deposit-agent" className="flex items-center gap-2 hover:text-white">
+                                    <TbCoinTaka size={16} /> Deposit Agent
+                                </Link>
                                 <Link to="/product-threshold" className="flex items-center gap-2 hover:text-white">
                                     <Layers size={16} /> Product threshold
                                 </Link>
@@ -211,6 +219,9 @@ const Header = () => {
                                 <Link to="/signup-bonus" className="flex items-center gap-2 hover:text-white">
                                     <Star size={16} /> Sign Up Bonus
                                 </Link>
+                                <Link to="/promo-code" className="flex items-center gap-2 hover:text-white">
+                                    <Star size={16} /> Promo Code
+                                </Link>
                                 <Link to="/term-settings" className="flex items-center gap-2 hover:text-white">
                                     <ShoppingBag size={16} /> T&C
                                 </Link>
@@ -223,9 +234,9 @@ const Header = () => {
                                 <Link to="/vip-level" className="flex items-center gap-2 hover:text-white">
                                     <Users size={16} /> VIP Level
                                 </Link>
-                                {/* <Link to="/slide-show-settings" className="flex items-center gap-2 hover:text-white">
-                                <Layers size={16} /> Slide Show settings
-                            </Link> */}
+                                <Link to="/slide-show-settings" className="flex items-center gap-2 hover:text-white">
+                                    <Layers size={16} /> Slide Show settings
+                                </Link>
                                 <Link to="/customer-service" className="flex items-center gap-2 hover:text-white">
                                     <Headset size={16} /> Customer Service
                                 </Link>

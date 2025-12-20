@@ -154,7 +154,8 @@ const MembershipList = () => {
           },
           createdAt: new Date().toISOString(),
           lastClaim: "",
-          totalClaim: 0
+          totalClaim: 0,
+          isVerify: "Unverified"
         }
 
         try {

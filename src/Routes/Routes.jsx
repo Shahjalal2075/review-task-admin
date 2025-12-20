@@ -29,6 +29,9 @@ import CombineTaskList from "../Pages/CombineTaskList/CombineTaskList";
 import SignupBonus from "../Pages/SignupBonus/SignupBonus";
 import RewardTaskList from "../Pages/RewardTaskList/RewardTaskList";
 import RewardTaskHistory from "../Pages/RewardTaskHistory/RewardTaskHistory";
+import Kyc from "../Pages/KYC/Kyc";
+import DepositAgent from "../Pages/DepositAgent/DepositAgent";
+import PromoCode from "../Pages/PromoCode/PromoCode";
 
 
 const Routes = createBrowserRouter([
@@ -140,6 +143,18 @@ const Routes = createBrowserRouter([
       {
         path: "/faq-settings",
         element: <Faq></Faq>
+      },
+      {
+        path: "/kyc",
+        element: <Kyc></Kyc>
+      },
+      {
+        path: "/deposit-agent",
+        element: <DepositAgent></DepositAgent>
+      },
+      {
+        path: "/promo-code",
+        element: <PromoCode></PromoCode>
       },
 
     ]
