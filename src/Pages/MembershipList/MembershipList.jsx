@@ -135,7 +135,8 @@ const MembershipList = () => {
           redemPoint: 0,
           promotionMsg: {
             cover: "",
-            message: ""
+            message: "",
+            time: ""
           },
           isCombinationActive: false,
           combinationEndTine: "",

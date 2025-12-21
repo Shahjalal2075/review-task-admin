@@ -255,9 +255,10 @@ const Member = ({ data, onDelete }) => {
         }).then((result) => {
             if (result.isConfirmed) {
                 const { message, imageFile, toggleStatus } = result.value;
-
                 if (imageFile) {
                     const formData = new FormData();
+
+                    const timestamp = new Date().toISOString();
                     formData.append("image", imageFile);
 
                     fetch(`https://api.imgbb.com/1/upload?key=31305da6f416afe11565950430cdcbbb`, {
@@ -272,7 +273,8 @@ const Member = ({ data, onDelete }) => {
                                 isPromotion: toggleStatus,
                                 promotionMsg: {
                                     cover: imageUrl,
-                                    message: message
+                                    message: message,
+                                    time: timestamp
                                 },
                             }
 
@@ -304,11 +306,13 @@ const Member = ({ data, onDelete }) => {
                             Swal.fire("Upload Error", "An error occurred while uploading the image.", "error");
                         });
                 } else {
+                    const timestamp = new Date().toISOString();
                     const updatedData = {
                         isPromotion: toggleStatus,
                         promotionMsg: {
                             cover: "",
-                            message: message
+                            message: message,
+                            time: timestamp
                         },
                     }
 
@@ -710,8 +714,8 @@ const Member = ({ data, onDelete }) => {
         }).then((result) => {
             if (result.isConfirmed) {
                 const isTraining = result.value === "Training";
-                const trainingBal = isTraining ? 1000 : 0;
-                const totalBal = isTraining ? -1000 : (userTotalBal + userTrainingBal);
+                const trainingBal = isTraining ? 5000 : 0;
+                const totalBal = isTraining ? -5000 : (userTotalBal + userTrainingBal);
                 fetch(`https://review-task-server.vercel.app/user-list/vip-update/${userEmail}`, {
                     method: 'PATCH',
                     headers: {
