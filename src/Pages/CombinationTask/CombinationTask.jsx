@@ -7,12 +7,14 @@ import withReactContent from 'sweetalert2-react-content';
 
 const CombinationTask = ({ user, onClose }) => {
 
-  //const userEmail = ((user.email === '') ? user.phone : user.email);
   const MySwal = withReactContent(Swal);
   const [sortOption, setSortOption] = useState('all');
   const [tasks, setTasks] = useState([]);
   const [filteredTasks, setFilteredTasks] = useState([]);
   const [targetTaskNo, setTargetTaskNo] = useState('');
+
+  // New State for Combination Selection
+  const [selectedCombination, setSelectedCombination] = useState(""); 
 
   const [productIdFilter, setProductIdFilter] = useState('');
   const [productTitleFilter, setProductTitleFilter] = useState('');
@@ -24,6 +26,15 @@ const CombinationTask = ({ user, onClose }) => {
   const [selectedTaskIds, setSelectedTaskIds] = useState([]);
 
   const navigate = useNavigate();
+
+  // Predefined Combination Options
+  const combinationOptions = [
+    { combination_name: "BD 1", profit_type: 6 },
+    { combination_name: "BD 2", profit_type: 8 },
+    { combination_name: "BD 3", profit_type: 10 },
+    { combination_name: "BD 4", profit_type: 12 },
+    { combination_name: "BD 5", profit_type: 15 },
+  ];
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -122,15 +133,18 @@ const CombinationTask = ({ user, onClose }) => {
     .filter(Boolean);
 
   const handleSaveTargetTask = () => {
-    if (!targetTaskNo || selectedTasks.length === 0) {
+    if (!targetTaskNo || selectedTasks.length === 0 || !selectedCombination) {
       MySwal.fire({
         icon: 'warning',
         title: 'Missing Fields',
-        text: 'Please ensure that both Target Task and Selected Task IDs are filled.',
+        text: 'Please ensure Target Task, Combination Name, and Selected Tasks are filled.',
         confirmButtonColor: '#10b981',
       });
       return;
     }
+
+    // Find selected combination details
+    const comboDetails = combinationOptions.find(opt => opt.combination_name === selectedCombination);
 
     const amounts = selectedTasks.map(task => parseFloat(task.price));
     const amountSums = [];
@@ -148,7 +162,9 @@ const CombinationTask = ({ user, onClose }) => {
       taskList: selectedTasks,
       amountSums,
       taskSize: selectedTasks.length,
-      runingTask: 2
+      runingTask: 2,
+      combination_name: comboDetails?.combination_name,
+      profit_type: comboDetails?.profit_type
     };
 
     fetch('https://review-task-server.vercel.app/combine-task', {
@@ -180,30 +196,48 @@ const CombinationTask = ({ user, onClose }) => {
 
       <div className="mb-6 space-y-2">
         <div><strong>Username:</strong> <span className="text-blue-700">{user.username}</span></div>
-        <div><strong>Wallet balance:</strong> <span className="text-red-600">${user.totalBal.toFixed(2)}</span></div>
+        <div><strong>Wallet balance:</strong> <span className="text-red-600">${user.totalBal?.toFixed(2)}</span></div>
 
         <div><strong>Task Running:</strong> {user.taskCount}</div>
 
-        <div className="space-y-2">
-          <div>
-            <label className="font-semibold">Target Task</label>
-            <input
-              type="text"
-              value={targetTaskNo}
-              onChange={(e) => setTargetTaskNo(e.target.value)}
-              className="w-full border px-3 py-2 rounded shadow bg-gray-100"
-            />
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label className="font-semibold block mb-1">Target Task No</label>
+                <input
+                type="number"
+                value={targetTaskNo}
+                onChange={(e) => setTargetTaskNo(e.target.value)}
+                placeholder="e.g. 5"
+                className="w-full border px-3 py-2 rounded shadow bg-gray-100 focus:outline-blue-500"
+                />
+            </div>
 
-          <div>
-            <label className="font-semibold">Selected Task IDs</label>
-            <textarea
-              value={selectedTaskIds.join(', ')}
-              readOnly
-              className="w-full border px-3 py-2 rounded shadow bg-gray-100"
-              rows={2}
-            />
-          </div>
+            {/* New Combination Name Select Field */}
+            <div>
+                <label className="font-semibold block mb-1">Combination Name</label>
+                <select
+                    value={selectedCombination}
+                    onChange={(e) => setSelectedCombination(e.target.value)}
+                    className="w-full border px-3 py-2 rounded shadow bg-gray-100 focus:outline-blue-500"
+                >
+                    <option value="">Select Combination</option>
+                    {combinationOptions.map((opt, idx) => (
+                        <option key={idx} value={opt.combination_name}>
+                            {opt.combination_name} (Profit: {opt.profit_type}x)
+                        </option>
+                    ))}
+                </select>
+            </div>
+        </div>
+
+        <div>
+          <label className="font-semibold block mb-1">Selected Task IDs</label>
+          <textarea
+            value={selectedTaskIds.join(', ')}
+            readOnly
+            className="w-full border px-3 py-2 rounded shadow bg-gray-100 text-sm font-mono"
+            rows={2}
+          />
         </div>
 
         <div className="flex flex-wrap space-x-4 mt-4">
@@ -227,34 +261,33 @@ const CombinationTask = ({ user, onClose }) => {
         <div className="flex flex-wrap gap-2 mb-4 items-center">
           <input type="text" placeholder="Product ID" className="border px-2 py-1 rounded" value={productIdFilter} onChange={(e) => setProductIdFilter(e.target.value)} />
           <input type="text" placeholder="Product title" className="border px-2 py-1 rounded" value={productTitleFilter} onChange={(e) => setProductTitleFilter(e.target.value)} />
-          <input type="text" placeholder="Minimum price" className="border px-2 py-1 rounded" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} />
-          <input type="text" placeholder="Highest price" className="border px-2 py-1 rounded" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} />
+          <input type="text" placeholder="Min price" className="border px-2 py-1 rounded w-24" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} />
+          <input type="text" placeholder="Max price" className="border px-2 py-1 rounded w-24" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} />
           <select className="border px-2 py-1 rounded" value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
-            <option value="all">All</option>
-            <option value="asc">Product prices are sorted</option>
-            <option value="desc">Product price reverse ranking</option>
+            <option value="all">Sort By</option>
+            <option value="asc">Price: Low to High</option>
+            <option value="desc">Price: High to Low</option>
           </select>
-          <input type="date" className="border px-2 py-1 rounded" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-          <span>-</span>
-          <input type="date" className="border px-2 py-1 rounded" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+          {/* Date inputs can be added here if needed, keeping simple for UI */}
+          
           <button onClick={handleSearch} className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600 flex items-center gap-2">
-            <FaSearch /> Search
+            <FaSearch /> 
           </button>
           <button onClick={handleReset} className="bg-gray-400 text-white px-4 py-1 rounded hover:bg-gray-500 flex items-center gap-2">
-            <FaUndo /> Reset
+            <FaUndo /> 
           </button>
         </div>
 
-        <div className="overflow-auto">
+        <div className="overflow-auto max-h-[500px]">
           <table className="w-full border text-sm text-center">
-            <thead className="bg-blue-200 text-blue-900">
+            <thead className="bg-blue-200 text-blue-900 sticky top-0">
               <tr>
                 <th className="p-2 border">Select</th>
-                <th className="p-2 border">Product ID</th>
-                <th className="p-2 border">Product title</th>
-                <th className="p-2 border">Product price</th>
-                <th className="p-2 border">Creation time</th>
-                <th className="p-2 border">Cover</th>
+                <th className="p-2 border">ID</th>
+                <th className="p-2 border">Title</th>
+                <th className="p-2 border">Price</th>
+                <th className="p-2 border">Date</th>
+                <th className="p-2 border">Image</th>
               </tr>
             </thead>
             <tbody>
@@ -262,20 +295,21 @@ const CombinationTask = ({ user, onClose }) => {
                 <tr><td colSpan="6" className="p-4 text-gray-500">No tasks found.</td></tr>
               ) : (
                 filteredTasks.map((task) => (
-                  <tr key={task._id} className="bg-white hover:bg-blue-50">
+                  <tr key={task._id} className={`hover:bg-blue-50 cursor-pointer ${selectedTaskIds.includes(task.product_id) ? 'bg-blue-100' : 'bg-white'}`} onClick={() => toggleTaskSelect(task.product_id)}>
                     <td className="p-2 border">
                       <input
                         type="checkbox"
                         checked={selectedTaskIds.includes(task.product_id)}
                         onChange={() => toggleTaskSelect(task.product_id)}
+                        onClick={(e) => e.stopPropagation()}
                       />
                     </td>
                     <td className="p-2 border">{task.product_id}</td>
-                    <td className="p-2 border">{task.title}</td>
-                    <td className="p-2 border">৳{task.price}</td>
-                    <td className="p-2 border">{task.creationTime}</td>
+                    <td className="p-2 border max-w-[200px] truncate" title={task.title}>{task.title}</td>
+                    <td className="p-2 border font-bold text-blue-600">৳{task.price}</td>
+                    <td className="p-2 border text-xs text-gray-500">{new Date(task.creationTime).toLocaleDateString()}</td>
                     <td className="p-2 border">
-                      <img src={task.cover} alt="cover" className="w-16 h-16 object-cover rounded shadow" />
+                      <img src={task.cover} alt="cover" className="w-10 h-10 object-cover rounded shadow mx-auto" />
                     </td>
                   </tr>
                 ))

@@ -108,12 +108,15 @@ const CombineTaskList = () => {
                                 <p><span className="font-semibold text-gray-700">⏳ Running Task:</span> {task.runingTask - 1}</p>
                                 <p><span className="font-semibold text-gray-700">🧾 Task Size:</span> {task.taskSize}</p>
                             </div>
-                            <button
-                                onClick={() => handleDelete(task._id)}
-                                className="bg-gradient-to-r from-red-500 to-red-700 text-white px-4 py-2 rounded-md font-medium shadow hover:shadow-lg transition"
-                            >
-                                🗑 Delete
-                            </button>
+                            <div className="">
+                                <button
+                                    onClick={() => handleDelete(task._id)}
+                                    className="bg-gradient-to-r from-red-500 to-red-700 text-white px-4 py-2 rounded-md font-medium shadow hover:shadow-lg transition"
+                                >
+                                    🗑 Delete
+                                </button>
+                                <p className="font-bold text-gray-700 text-center pt-2 text-xl">{task.profit_type ? task.profit_type : 1}x</p>
+                            </div>
                         </div>
 
                         {/* Task Table */}

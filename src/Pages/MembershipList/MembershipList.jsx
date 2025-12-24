@@ -156,7 +156,9 @@ const MembershipList = () => {
           createdAt: new Date().toISOString(),
           lastClaim: "",
           totalClaim: 0,
-          isVerify: "Unverified"
+          isVerify: "Unverified",
+          combination_name: "",
+          profit_type: 0
         }
 
         try {

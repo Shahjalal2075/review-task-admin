@@ -6,31 +6,31 @@ const CombineTaskHistory = () => {
     const [searchEmail, setSearchEmail] = useState('');
     const [searchRunningTask, setSearchRunningTask] = useState('');
 
-   useEffect(() => {
-    fetch('https://review-task-server.vercel.app/user-tasks')
-        .then((res) => res.json())
-        .then((data) => {
-            const targetTasks = data
-                .filter((item) => item.product_id==="Combine Task")
-                .sort((a, b) => {
-                    const statusPriority = { "Pending": 0, "Complete": 1 };
+    useEffect(() => {
+        fetch('https://review-task-server.vercel.app/user-tasks')
+            .then((res) => res.json())
+            .then((data) => {
+                const targetTasks = data
+                    .filter((item) => item.product_id === "Combine Task")
+                    .sort((a, b) => {
+                        const statusPriority = { "Pending": 0, "Complete": 1 };
 
-                    // First: sort by status (Pending before Complete)
-                    if (statusPriority[a.status] !== statusPriority[b.status]) {
-                        return statusPriority[a.status] - statusPriority[b.status];
-                    }
+                        // First: sort by status (Pending before Complete)
+                        if (statusPriority[a.status] !== statusPriority[b.status]) {
+                            return statusPriority[a.status] - statusPriority[b.status];
+                        }
 
-                    // Then: within same status, sort by taskStart DESC (latest first)
-                    const dateA = new Date(a.taskStart);
-                    const dateB = new Date(b.taskStart);
-                    return dateB - dateA; // descending
-                });
+                        // Then: within same status, sort by taskStart DESC (latest first)
+                        const dateA = new Date(a.taskStart);
+                        const dateB = new Date(b.taskStart);
+                        return dateB - dateA; // descending
+                    });
 
-            setTasks(targetTasks);
-            setFilteredTasks(targetTasks);
-        })
-        .catch((err) => console.error('Error fetching data:', err));
-}, []);
+                setTasks(targetTasks);
+                setFilteredTasks(targetTasks);
+            })
+            .catch((err) => console.error('Error fetching data:', err));
+    }, []);
 
 
 
@@ -113,11 +113,15 @@ const CombineTaskHistory = () => {
                                 <p><span className="font-semibold text-gray-700">⏳ Running Task:</span> {task.runingTask}</p>
                                 <p><span className="font-semibold text-gray-700">🧾 Task Size:</span> {task.taskSize}</p>
                             </div>
-                            <button
-                                className={`${task.status === "Complete" ? "bg-gradient-to-r from-green-500 to-green-700" : "bg-gradient-to-r from-yellow-500 to-yellow-700"} text-white px-4 py-2 rounded-md font-medium shadow hover:shadow-lg transition`}
-                            >
-                                {task.status === "Complete" ? "✔️ Complete" : "Running"}
-                            </button>
+                            <div className="">
+                                <button
+                                    className={`${task.status === "Complete" ? "bg-gradient-to-r from-green-500 to-green-700" : "bg-gradient-to-r from-yellow-500 to-yellow-700"} text-white px-4 py-2 rounded-md font-medium shadow hover:shadow-lg transition`}
+                                >
+                                    {task.status === "Complete" ? "✔️ Complete" : "Running"}
+                                </button>
+                                <p className="font-bold text-gray-700 text-center pt-2 text-xl">{task.profit_type ? task.profit_type : 1}x</p>
+
+                            </div>
                         </div>
 
                         {/* Task Table */}
