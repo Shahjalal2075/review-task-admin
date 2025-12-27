@@ -14,7 +14,7 @@ const CombinationTask = ({ user, onClose }) => {
   const [targetTaskNo, setTargetTaskNo] = useState('');
 
   // New State for Combination Selection
-  const [selectedCombination, setSelectedCombination] = useState(""); 
+  const [selectedCombination, setSelectedCombination] = useState("");
 
   const [productIdFilter, setProductIdFilter] = useState('');
   const [productTitleFilter, setProductTitleFilter] = useState('');
@@ -29,11 +29,22 @@ const CombinationTask = ({ user, onClose }) => {
 
   // Predefined Combination Options
   const combinationOptions = [
-    { combination_name: "BD 1", profit_type: 6 },
-    { combination_name: "BD 2", profit_type: 8 },
-    { combination_name: "BD 3", profit_type: 10 },
-    { combination_name: "BD 4", profit_type: 12 },
-    { combination_name: "BD 5", profit_type: 15 },
+    { combination_name: "The Gilded Collection", profit_type: 15 },
+    { combination_name: "The Imperial Archive", profit_type: 15 },
+    { combination_name: "Heirloom Library", profit_type: 20 },
+    { combination_name: "Sovereign Editions", profit_type: 20 },
+    { combination_name: "Black Label Books", profit_type: 25 },
+    { combination_name: "Signature Editions", profit_type: 25 },
+    { combination_name: "The Private Shelf", profit_type: 30 },
+    { combination_name: "Obsidian Collection", profit_type: 30 },
+    { combination_name: "Gold Standard Reads Collection", profit_type: 35 },
+    { combination_name: "The Gilded Collection", profit_type: 35 },
+    { combination_name: "The Platinum Shelf", profit_type: 40 },
+    { combination_name: "Sovereign Editions", profit_type: 40 },
+    { combination_name: "The Imperial Archive", profit_type: 40 },
+    { combination_name: "The Agecraft Collection", profit_type: 45 },
+    { combination_name: "History’s Living Threads Pack", profit_type: 50 },
+    { combination_name: "The Past Reimagined Bundle", profit_type: 60 },
   ];
 
   useEffect(() => {
@@ -201,33 +212,33 @@ const CombinationTask = ({ user, onClose }) => {
         <div><strong>Task Running:</strong> {user.taskCount}</div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <label className="font-semibold block mb-1">Target Task No</label>
-                <input
-                type="number"
-                value={targetTaskNo}
-                onChange={(e) => setTargetTaskNo(e.target.value)}
-                placeholder="e.g. 5"
-                className="w-full border px-3 py-2 rounded shadow bg-gray-100 focus:outline-blue-500"
-                />
-            </div>
+          <div>
+            <label className="font-semibold block mb-1">Target Task No</label>
+            <input
+              type="number"
+              value={targetTaskNo}
+              onChange={(e) => setTargetTaskNo(e.target.value)}
+              placeholder="e.g. 5"
+              className="w-full border px-3 py-2 rounded shadow bg-gray-100 focus:outline-blue-500"
+            />
+          </div>
 
-            {/* New Combination Name Select Field */}
-            <div>
-                <label className="font-semibold block mb-1">Combination Name</label>
-                <select
-                    value={selectedCombination}
-                    onChange={(e) => setSelectedCombination(e.target.value)}
-                    className="w-full border px-3 py-2 rounded shadow bg-gray-100 focus:outline-blue-500"
-                >
-                    <option value="">Select Combination</option>
-                    {combinationOptions.map((opt, idx) => (
-                        <option key={idx} value={opt.combination_name}>
-                            {opt.combination_name} (Profit: {opt.profit_type}x)
-                        </option>
-                    ))}
-                </select>
-            </div>
+          {/* New Combination Name Select Field */}
+          <div>
+            <label className="font-semibold block mb-1">Combination Name</label>
+            <select
+              value={selectedCombination}
+              onChange={(e) => setSelectedCombination(e.target.value)}
+              className="w-full border px-3 py-2 rounded shadow bg-gray-100 focus:outline-blue-500"
+            >
+              <option value="">Select Combination</option>
+              {combinationOptions.map((opt, idx) => (
+                <option key={idx} value={opt.combination_name}>
+                  {opt.combination_name} (Profit: {opt.profit_type}x)
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div>
@@ -269,12 +280,12 @@ const CombinationTask = ({ user, onClose }) => {
             <option value="desc">Price: High to Low</option>
           </select>
           {/* Date inputs can be added here if needed, keeping simple for UI */}
-          
+
           <button onClick={handleSearch} className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600 flex items-center gap-2">
-            <FaSearch /> 
+            <FaSearch />
           </button>
           <button onClick={handleReset} className="bg-gray-400 text-white px-4 py-1 rounded hover:bg-gray-500 flex items-center gap-2">
-            <FaUndo /> 
+            <FaUndo />
           </button>
         </div>
 
