@@ -12,7 +12,7 @@ const PromoCode = () => {
     const [actionLoading, setActionLoading] = useState(false);
     const [message, setMessage] = useState({ type: "", text: "" });
 
-    const API_URL = 'https://review-task-server.vercel.app/promo-code';
+    const API_URL = 'https://server.amazonkindlerating.com/promo-code';
 
     // Helper: Show Message
     const showMessage = (type, text) => {

@@ -66,7 +66,7 @@ const WithdrawRecord = () => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('https://review-task-server.vercel.app/withdraw');
+      const response = await fetch('https://server.amazonkindlerating.com/withdraw');
       const data = await response.json();
       const formattedData = data
         .map((item, index) => {
@@ -182,7 +182,7 @@ const WithdrawRecord = () => {
     const userEmail = item.email || item.phone;
     const timestamp = new Date().toISOString();
     try {
-      const userRes = await fetch(`https://review-task-server.vercel.app/user-list/${userEmail}`);
+      const userRes = await fetch(`https://server.amazonkindlerating.com/user-list/${userEmail}`);
       const userData = await userRes.json();
       const depositBal = {
         totalBal: userData.totalBal + parseFloat(item.cashWithdraw),
@@ -191,24 +191,24 @@ const WithdrawRecord = () => {
       };
 
       if (newStatus === 'hold') {
-        await fetch(`https://review-task-server.vercel.app/withdraw/${item.id}`, {
+        await fetch(`https://server.amazonkindlerating.com/withdraw/${item.id}`, {
           method: 'PATCH',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({ status: "Hold", operator: user.name, auditTime: timestamp })
         });
       } else if (newStatus === 'approve') {
-        await fetch(`https://review-task-server.vercel.app/withdraw/${item.id}`, {
+        await fetch(`https://server.amazonkindlerating.com/withdraw/${item.id}`, {
           method: 'PATCH',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({ status: "Approved", operator: user.name, auditTime: timestamp })
         });
       } else if (newStatus === 'cancel') {
-        await fetch(`https://review-task-server.vercel.app/user-list/bal-update/${userEmail}`, {
+        await fetch(`https://server.amazonkindlerating.com/user-list/bal-update/${userEmail}`, {
           method: 'PATCH',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify(depositBal)
         });
-        await fetch(`https://review-task-server.vercel.app/withdraw/${item.id}`, {
+        await fetch(`https://server.amazonkindlerating.com/withdraw/${item.id}`, {
           method: 'PATCH',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({ status: "Rejected", operator: user.name, auditTime: timestamp })

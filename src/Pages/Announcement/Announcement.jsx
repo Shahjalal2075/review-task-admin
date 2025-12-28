@@ -14,7 +14,7 @@ const Announcement = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const apiUrl = "https://review-task-server.vercel.app/announcement";
+  const apiUrl = "https://server.amazonkindlerating.com/announcement";
 
   const fetchAnnouncements = async () => {
     try {

@@ -13,7 +13,7 @@ const BindWalletModal = ({ onClose, userDetails }) => {
     const [realName, setRealName] = useState(userDetails.realName);
 
     /* useEffect(() => {
-        fetch(`https://review-task-server.vercel.app/wallet/${userEmail}`)
+        fetch(`https://server.amazonkindlerating.com/wallet/${userEmail}`)
             .then((res) => res.json())
             .then((data) => {
                 setWalletAddress(data.walletAddress || '');
@@ -33,7 +33,7 @@ const BindWalletModal = ({ onClose, userDetails }) => {
         }
 
         if (walletDetails) {
-            fetch(`https://review-task-server.vercel.app/wallet/${userEmail}`, {
+            fetch(`https://server.amazonkindlerating.com/wallet/${userEmail}`, {
                 method: 'PATCH',
                 headers: {
                     'content-type': 'application/json'
@@ -48,7 +48,7 @@ const BindWalletModal = ({ onClose, userDetails }) => {
                     toast('Failed to add.')
                 });
         } else {
-            /* fetch('https://review-task-server.vercel.app/wallet', {
+            /* fetch('https://server.amazonkindlerating.com/wallet', {
                 method: 'POST',
                 headers: {
                     'content-type': 'application/json'

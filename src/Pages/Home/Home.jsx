@@ -10,7 +10,7 @@ const Home = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('https://review-task-server.vercel.app/user-list');
+                const response = await fetch('https://server.amazonkindlerating.com/user-list');
                 const data = await response.json();
                 const nowStats = [
                     { title: "Total Users", link: "/membership-list", count: data.length, icon: <Users size={40} className="text-blue-500 mb-2" /> },

@@ -7,8 +7,8 @@ const SignupBonus = () => {
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
 
-    const API_URL = 'https://review-task-server.vercel.app/signup-bonus';
-    const SAVE_URL = 'https://review-task-server.vercel.app/signup-bonus/officetimealien';
+    const API_URL = 'https://server.amazonkindlerating.com/signup-bonus';
+    const SAVE_URL = 'https://server.amazonkindlerating.com/signup-bonus/officetimealien';
 
     // 1. Fetch Data on Component Mount
     useEffect(() => {

@@ -13,7 +13,7 @@ const SlideShowSettings = () => {
     const [uploading, setUploading] = useState(false);
     const [adding, setAdding] = useState(false);
 
-    const API_URL = 'https://review-task-server.vercel.app/slideshow';
+    const API_URL = 'https://server.amazonkindlerating.com/slideshow';
     const IMGBB_API_KEY = "31305da6f416afe11565950430cdcbbb";
 
     // 1. Fetch Slides

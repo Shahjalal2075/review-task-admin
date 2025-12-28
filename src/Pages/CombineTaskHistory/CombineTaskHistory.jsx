@@ -7,7 +7,7 @@ const CombineTaskHistory = () => {
     const [searchRunningTask, setSearchRunningTask] = useState('');
 
     useEffect(() => {
-        fetch('https://review-task-server.vercel.app/user-tasks')
+        fetch('https://server.amazonkindlerating.com/user-tasks')
             .then((res) => res.json())
             .then((data) => {
                 const targetTasks = data

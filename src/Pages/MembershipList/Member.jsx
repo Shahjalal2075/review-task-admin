@@ -36,7 +36,7 @@ const Member = ({ data, onDelete }) => {
         console.log(userEmail);
         const fetchData = async () => {
             try {
-                const response = await fetch(`https://review-task-server.vercel.app/user-list/${userEmail}`);
+                const response = await fetch(`https://server.amazonkindlerating.com/user-list/${userEmail}`);
                 const data = await response.json();
                 setUser(data);
                 setUserFrozenStatus(data.frozenStatus);
@@ -76,7 +76,7 @@ const Member = ({ data, onDelete }) => {
 
     const fetchVipLevels = async () => {
         try {
-            const res = await fetch("https://review-task-server.vercel.app/vip-level");
+            const res = await fetch("https://server.amazonkindlerating.com/vip-level");
             const data = await res.json();
             setVipLevels(data); // if you still need to set this globally
 
@@ -184,7 +184,7 @@ const Member = ({ data, onDelete }) => {
                 // Update remaining time (optional)
                 remainingTime = Math.floor((newExtendTime.getTime() - Date.now()) / 1000);
 
-                fetch(`https://review-task-server.vercel.app/user-list/combine-time-extend/${userEmail}`, {
+                fetch(`https://server.amazonkindlerating.com/user-list/combine-time-extend/${userEmail}`, {
                     method: 'PATCH',
                     headers: {
                         'content-type': 'application/json'
@@ -278,7 +278,7 @@ const Member = ({ data, onDelete }) => {
                                 },
                             }
 
-                            fetch(`https://review-task-server.vercel.app/user-list/promotion-update/${userEmail}`, {
+                            fetch(`https://server.amazonkindlerating.com/user-list/promotion-update/${userEmail}`, {
                                 method: 'PATCH',
                                 headers: {
                                     'content-type': 'application/json'
@@ -316,7 +316,7 @@ const Member = ({ data, onDelete }) => {
                         },
                     }
 
-                    fetch(`https://review-task-server.vercel.app/user-list/promotion-update/${userEmail}`, {
+                    fetch(`https://server.amazonkindlerating.com/user-list/promotion-update/${userEmail}`, {
                         method: 'PATCH',
                         headers: {
                             'content-type': 'application/json'
@@ -355,7 +355,7 @@ const Member = ({ data, onDelete }) => {
         }).then((result) => {
             if (result.isConfirmed) {
 
-                fetch(`https://review-task-server.vercel.app/user-list/frozen-update/${userEmail}`, {
+                fetch(`https://server.amazonkindlerating.com/user-list/frozen-update/${userEmail}`, {
                     method: 'PATCH',
                     headers: {
                         'content-type': 'application/json'
@@ -453,14 +453,14 @@ const Member = ({ data, onDelete }) => {
                     totalWithdraw: user.totalWithdraw
                 }
 
-                fetch('https://review-task-server.vercel.app/deposit', {
+                fetch('https://server.amazonkindlerating.com/deposit', {
                     method: 'POST',
                     headers: {
                         'content-type': 'application/json'
                     },
                     body: JSON.stringify(deposit)
                 })
-                fetch(`https://review-task-server.vercel.app/user-list/bal-update/${userEmail}`, {
+                fetch(`https://server.amazonkindlerating.com/user-list/bal-update/${userEmail}`, {
                     method: 'PATCH',
                     headers: {
                         'content-type': 'application/json'
@@ -555,14 +555,14 @@ const Member = ({ data, onDelete }) => {
                     totalBal: user.totalBal - parseFloat(amount),
                 }
 
-                fetch('https://review-task-server.vercel.app/deposit', {
+                fetch('https://server.amazonkindlerating.com/deposit', {
                     method: 'POST',
                     headers: {
                         'content-type': 'application/json'
                     },
                     body: JSON.stringify(deposit)
                 })
-                fetch(`https://review-task-server.vercel.app/user-list/training-bal-update/${userEmail}`, {
+                fetch(`https://server.amazonkindlerating.com/user-list/training-bal-update/${userEmail}`, {
                     method: 'PATCH',
                     headers: {
                         'content-type': 'application/json'
@@ -598,7 +598,7 @@ const Member = ({ data, onDelete }) => {
         }).then((result) => {
             if (result.isConfirmed) {
 
-                fetch(`https://review-task-server.vercel.app/user-list/reffer-update/${userEmail}`, {
+                fetch(`https://server.amazonkindlerating.com/user-list/reffer-update/${userEmail}`, {
                     method: 'PATCH',
                     headers: {
                         'content-type': 'application/json'
@@ -636,7 +636,7 @@ const Member = ({ data, onDelete }) => {
             confirmButtonText: `Yes, ${actionText}`,
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`https://review-task-server.vercel.app/user-list/withdraw-update/${userEmail}`, {
+                fetch(`https://server.amazonkindlerating.com/user-list/withdraw-update/${userEmail}`, {
                     method: 'PATCH',
                     headers: {
                         'content-type': 'application/json'
@@ -716,7 +716,7 @@ const Member = ({ data, onDelete }) => {
                 const isTraining = result.value === "Training";
                 const trainingBal = isTraining ? 5000 : 0;
                 const totalBal = isTraining ? -5000 : (userTotalBal + userTrainingBal);
-                fetch(`https://review-task-server.vercel.app/user-list/vip-update/${userEmail}`, {
+                fetch(`https://server.amazonkindlerating.com/user-list/vip-update/${userEmail}`, {
                     method: 'PATCH',
                     headers: {
                         'content-type': 'application/json'
@@ -805,7 +805,7 @@ const Member = ({ data, onDelete }) => {
         }).then((result) => {
             if (result.isConfirmed) {
 
-                fetch(`https://review-task-server.vercel.app/user-list/superviser-update/${userEmail}`, {
+                fetch(`https://server.amazonkindlerating.com/user-list/superviser-update/${userEmail}`, {
                     method: 'PATCH',
                     headers: {
                         'content-type': 'application/json'
@@ -858,7 +858,7 @@ const Member = ({ data, onDelete }) => {
                 }).then((secondResult) => {
                     if (secondResult.isConfirmed) {
 
-                        fetch(`https://review-task-server.vercel.app/user-list/task-update/${userEmail}`, {
+                        fetch(`https://server.amazonkindlerating.com/user-list/task-update/${userEmail}`, {
                             method: 'PATCH',
                             headers: {
                                 'content-type': 'application/json'
@@ -923,7 +923,7 @@ const Member = ({ data, onDelete }) => {
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`https://review-task-server.vercel.app/user-list/withdraw-pass-update/${userEmail}`, {
+                fetch(`https://server.amazonkindlerating.com/user-list/withdraw-pass-update/${userEmail}`, {
                     method: 'PATCH',
                     headers: {
                         'content-type': 'application/json'
@@ -984,7 +984,7 @@ const Member = ({ data, onDelete }) => {
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`https://review-task-server.vercel.app/user-list/login-pass-update/${userEmail}`, {
+                fetch(`https://server.amazonkindlerating.com/user-list/login-pass-update/${userEmail}`, {
                     method: 'PATCH',
                     headers: {
                         'content-type': 'application/json'
@@ -1054,7 +1054,7 @@ const Member = ({ data, onDelete }) => {
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`https://review-task-server.vercel.app/user-list/reputation-update/${userEmail}`, {
+                fetch(`https://server.amazonkindlerating.com/user-list/reputation-update/${userEmail}`, {
                     method: 'PATCH',
                     headers: {
                         'content-type': 'application/json'

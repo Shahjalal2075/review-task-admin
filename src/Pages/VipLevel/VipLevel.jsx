@@ -18,7 +18,7 @@ const VipLevel = () => {
 
   const fetchVipLevels = async () => {
     try {
-      const res = await fetch("https://review-task-server.vercel.app/vip-level");
+      const res = await fetch("https://server.amazonkindlerating.com/vip-level");
       const data = await res.json();
       setVipLevels(data);
     } catch (error) {
@@ -64,7 +64,7 @@ const VipLevel = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const res = await fetch("https://review-task-server.vercel.app/vip-level", {
+          const res = await fetch("https://server.amazonkindlerating.com/vip-level", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(result.value),
@@ -110,7 +110,7 @@ const VipLevel = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const res = await fetch(`https://review-task-server.vercel.app/vip-level/${level._id}`, {
+          const res = await fetch(`https://server.amazonkindlerating.com/vip-level/${level._id}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(result.value),
@@ -142,7 +142,7 @@ const VipLevel = () => {
 
     if (confirm.isConfirmed) {
       try {
-        const res = await fetch(`https://review-task-server.vercel.app/vip-level/${id}`, {
+        const res = await fetch(`https://server.amazonkindlerating.com/vip-level/${id}`, {
           method: "DELETE",
         });
 

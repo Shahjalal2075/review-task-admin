@@ -23,7 +23,7 @@ const Kyc = () => {
     // 1. Fetch Data
     const fetchKycData = async () => {
         try {
-            const res = await fetch('https://review-task-server.vercel.app/kyc-verify');
+            const res = await fetch('https://server.amazonkindlerating.com/kyc-verify');
             const data = await res.json();
 
             if (Array.isArray(data)) {
@@ -82,14 +82,14 @@ const Kyc = () => {
         setConfirmModal({ ...confirmModal, isOpen: false });
 
         try {
-            const kycUpdateRes = await fetch(`https://review-task-server.vercel.app/kyc-verify/${request.username}`, {
+            const kycUpdateRes = await fetch(`https://server.amazonkindlerating.com/kyc-verify/${request.username}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: newStatus })
             });
 
             const isVerifiedStatus = newStatus === 'Approved' ? 'Verified' : 'Unverified';
-            const userUpdateRes = await fetch(`https://review-task-server.vercel.app/user-list/kyc/${request.username}`, {
+            const userUpdateRes = await fetch(`https://server.amazonkindlerating.com/user-list/kyc/${request.username}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ isVerify: isVerifiedStatus })

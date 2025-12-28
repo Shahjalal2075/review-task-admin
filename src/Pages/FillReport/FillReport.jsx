@@ -32,8 +32,8 @@ const FillReport = () => {
     setLoading(true);
     try {
       const [depositRes, withdrawRes] = await Promise.all([
-        fetch('https://review-task-server.vercel.app/deposit'),
-        fetch('https://review-task-server.vercel.app/withdraw')
+        fetch('https://server.amazonkindlerating.com/deposit'),
+        fetch('https://server.amazonkindlerating.com/withdraw')
       ]);
 
       const [depositData, withdrawData] = await Promise.all([

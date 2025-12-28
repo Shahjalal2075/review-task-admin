@@ -7,7 +7,7 @@ const RewardTaskList = () => {
     const [searchRunningTask, setSearchRunningTask] = useState('');
 
     useEffect(() => {
-        fetch('https://review-task-server.vercel.app/reward-task')
+        fetch('https://server.amazonkindlerating.com/reward-task')
             .then((res) => res.json())
             .then((data) => {
                 setTasks(data);
@@ -34,7 +34,7 @@ const RewardTaskList = () => {
     };
 
     const handleDelete = (id) => {
-        fetch(`https://review-task-server.vercel.app/reward-task/${id}`, {
+        fetch(`https://server.amazonkindlerating.com/reward-task/${id}`, {
             method: 'DELETE',
         })
             .then((res) => res.json())

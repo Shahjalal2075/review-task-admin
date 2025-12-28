@@ -16,7 +16,7 @@ const About = () => {
       navigate('/');
       return;
     }
-    fetch('https://review-task-server.vercel.app/about/termalien')
+    fetch('https://server.amazonkindlerating.com/about/termalien')
       .then((res) => res.json())
       .then((data) => {
         setTermsText(data.text);
@@ -38,7 +38,7 @@ const About = () => {
 
     setUpdating(true);
 
-    fetch('https://review-task-server.vercel.app/about/termalien', {
+    fetch('https://server.amazonkindlerating.com/about/termalien', {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'

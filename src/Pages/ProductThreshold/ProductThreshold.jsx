@@ -16,7 +16,7 @@ const ProductThreshold = () => {
       navigate('/');
       return;
     }
-    fetch(`https://review-task-server.vercel.app/task-ratio/officetimealien`)
+    fetch(`https://server.amazonkindlerating.com/task-ratio/officetimealien`)
       .then((res) => res.json())
       .then((data) => {
         setMinRatio(data.min);
@@ -32,7 +32,7 @@ const ProductThreshold = () => {
       max: Number(maxRatio),
     };
   
-    fetch(`https://review-task-server.vercel.app/task-ratio/officetimealien`, {
+    fetch(`https://server.amazonkindlerating.com/task-ratio/officetimealien`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',

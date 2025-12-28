@@ -57,7 +57,7 @@ const DepositRecord = () => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('https://review-task-server.vercel.app/deposit');
+      const response = await fetch('https://server.amazonkindlerating.com/deposit');
       const data = await response.json();
       const formattedData = data
         .map((item, index) => {
@@ -182,7 +182,7 @@ const DepositRecord = () => {
 
     try {
       console.log(item);
-      const depositRes = await fetch(`https://review-task-server.vercel.app/deposit/${item.id}`, {
+      const depositRes = await fetch(`https://server.amazonkindlerating.com/deposit/${item.id}`, {
         method: 'PATCH',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -192,7 +192,7 @@ const DepositRecord = () => {
 
       // If Approved, Update Balance
       if (newStatus === 'Approved') {
-        const userRes = await fetch(`https://review-task-server.vercel.app/user-list/${item.email}`);
+        const userRes = await fetch(`https://server.amazonkindlerating.com/user-list/${item.email}`);
         const userData = await userRes.json();
 
         if (userData && userData.totalBal !== undefined) {
@@ -202,7 +202,7 @@ const DepositRecord = () => {
             totalWithdraw: userData.totalWithdraw
           };
 
-          await fetch(`https://review-task-server.vercel.app/user-list/bal-update/${item.email}`, {
+          await fetch(`https://server.amazonkindlerating.com/user-list/bal-update/${item.email}`, {
             method: 'PATCH',
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify(depositBal)

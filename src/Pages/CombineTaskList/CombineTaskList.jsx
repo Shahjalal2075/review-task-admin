@@ -7,7 +7,7 @@ const CombineTaskList = () => {
     const [searchRunningTask, setSearchRunningTask] = useState('');
 
     useEffect(() => {
-        fetch('https://review-task-server.vercel.app/combine-task')
+        fetch('https://server.amazonkindlerating.com/combine-task')
             .then((res) => res.json())
             .then((data) => {
                 setTasks(data);
@@ -34,7 +34,7 @@ const CombineTaskList = () => {
     };
 
     const handleDelete = (id) => {
-        fetch(`https://review-task-server.vercel.app/combine-task/${id}`, {
+        fetch(`https://server.amazonkindlerating.com/combine-task/${id}`, {
             method: 'DELETE',
         })
             .then((res) => res.json())

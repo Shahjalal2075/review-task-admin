@@ -12,7 +12,7 @@ const TaskRecord = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get('https://review-task-server.vercel.app/user-tasks/');
+        const res = await axios.get('https://server.amazonkindlerating.com/user-tasks/');
         // Sort by taskStart descending
         const sortedData = res.data.sort((a, b) => new Date(b.taskStart) - new Date(a.taskStart));
         setData(sortedData);

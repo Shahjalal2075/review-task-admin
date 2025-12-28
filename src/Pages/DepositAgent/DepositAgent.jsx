@@ -20,7 +20,7 @@ const DepositAgent = () => {
         method: "Bkash" // Default
     });
 
-    const API_URL = 'https://review-task-server.vercel.app/deposit-agent';
+    const API_URL = 'https://server.amazonkindlerating.com/deposit-agent';
 
     // Helper: Show Message
     const showMessage = (type, text) => {

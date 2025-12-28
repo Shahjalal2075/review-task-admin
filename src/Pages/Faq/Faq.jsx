@@ -12,7 +12,7 @@ const Faq = () => {
   const [newAnswer, setNewAnswer] = useState('');
 
   const fetchFaqs = async () => {
-    const res = await fetch('https://review-task-server.vercel.app/faq');
+    const res = await fetch('https://server.amazonkindlerating.com/faq');
     const data = await res.json();
     setFaqs(data);
     setLoading(false);
@@ -29,7 +29,7 @@ const Faq = () => {
   const handleAddFaq = async () => {
     if (!newQuestion || !newAnswer) return Swal.fire('Error', 'Fill all fields!', 'error');
 
-    const res = await fetch('https://review-task-server.vercel.app/faq', {
+    const res = await fetch('https://server.amazonkindlerating.com/faq', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ question: newQuestion, answer: newAnswer }),
@@ -63,7 +63,7 @@ const Faq = () => {
       },
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const res = await fetch(`https://review-task-server.vercel.app/faq/${faq._id}`, {
+        const res = await fetch(`https://server.amazonkindlerating.com/faq/${faq._id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(result.value),
@@ -85,7 +85,7 @@ const Faq = () => {
       confirmButtonText: 'Yes, delete it!',
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const res = await fetch(`https://review-task-server.vercel.app/faq/${id}`, {
+        const res = await fetch(`https://server.amazonkindlerating.com/faq/${id}`, {
           method: 'DELETE',
         });
         if (res.ok) {

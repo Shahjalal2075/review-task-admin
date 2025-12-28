@@ -17,7 +17,7 @@ const CustomerService = () => {
       navigate('/');
       return;
     }
-      fetch(`https://review-task-server.vercel.app/support-link/supportlinkalien`)
+      fetch(`https://server.amazonkindlerating.com/support-link/supportlinkalien`)
         .then((res) => res.json())
         .then((data) => {
           setTelegram1(data.telegram1);
@@ -30,7 +30,7 @@ const CustomerService = () => {
 
   const handleSave = () => {
 
-    fetch(`https://review-task-server.vercel.app/support-link/supportlinkalien`, {
+    fetch(`https://server.amazonkindlerating.com/support-link/supportlinkalien`, {
       method: 'PATCH',
       headers: {
         'content-type': 'application/json'

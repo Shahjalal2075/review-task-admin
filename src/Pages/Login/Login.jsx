@@ -77,7 +77,7 @@ const Login = () => {
                     toast('Fill login details.');
                     return;
                 }
-                const res = await axios.get('https://review-task-server.vercel.app/user-list');
+                const res = await axios.get('https://server.amazonkindlerating.com/user-list');
                 const existingUser = res.data.find(user => user.phone === formData.phone);
                 if (existingUser) {
                     if (existingUser.password === formData.password) {

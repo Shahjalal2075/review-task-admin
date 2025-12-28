@@ -27,7 +27,7 @@ const RewardTask = ({ user, onClose }) => {
     useEffect(() => {
         const fetchTasks = async () => {
             try {
-                const res = await axios.get('https://review-task-server.vercel.app/tasks');
+                const res = await axios.get('https://server.amazonkindlerating.com/tasks');
                 const withSelection = res.data.map(task => ({ ...task, selected: false }));
                 setTasks(withSelection);
                 setFilteredTasks(withSelection);
@@ -150,7 +150,7 @@ const RewardTask = ({ user, onClose }) => {
             runingTask: 2
         };
 
-        fetch('https://review-task-server.vercel.app/reward-task', {
+        fetch('https://server.amazonkindlerating.com/reward-task', {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify(addTargetTask)

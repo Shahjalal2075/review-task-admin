@@ -13,7 +13,7 @@ const UsdtAddress = () => {
 
   // Fetch data from API
   useEffect(() => {
-    fetch('https://review-task-server.vercel.app/wallet')
+    fetch('https://server.amazonkindlerating.com/wallet')
       .then((res) => res.json())
       .then((resData) => {
         setData([...resData].reverse());
@@ -39,7 +39,7 @@ const UsdtAddress = () => {
   }
   const handleDelete = (id) => {
     console.log(id)
-    fetch(`https://review-task-server.vercel.app/wallet/${id}`, {
+    fetch(`https://server.amazonkindlerating.com/wallet/${id}`, {
       method: "DELETE",
     })
       .then(res => res.json())

@@ -31,7 +31,7 @@ const MembershipList = () => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('https://review-task-server.vercel.app/user-list');
+        const response = await fetch('https://server.amazonkindlerating.com/user-list');
         const data = await response.json();
         const reversedData = data.reverse();
         setAllData(reversedData);
@@ -162,7 +162,7 @@ const MembershipList = () => {
         }
 
         try {
-          const res = await axios.get('https://review-task-server.vercel.app/user-list');
+          const res = await axios.get('https://server.amazonkindlerating.com/user-list');
           const users = res.data;
           const existingUserEmail = res.data.find(user => user.email === formData.email);
           const existingUserPhone = res.data.find(user => user.phone === formData.phone);
@@ -185,7 +185,7 @@ const MembershipList = () => {
             toast.error('This Username Already Registered.');
           }
           else {
-            await axios.post('https://review-task-server.vercel.app/user-list', updatedData);
+            await axios.post('https://server.amazonkindlerating.com/user-list', updatedData);
             Swal.fire({
               icon: 'success',
               title: 'Member Added',
@@ -254,7 +254,7 @@ const MembershipList = () => {
   // delete 
   const handleDelete = (id) => {
     console.log(id)
-    fetch(`https://review-task-server.vercel.app/user-list/${id}`, {
+    fetch(`https://server.amazonkindlerating.com/user-list/${id}`, {
       method: "DELETE",
     })
       .then(res => res.json())

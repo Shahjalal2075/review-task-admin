@@ -27,7 +27,7 @@ const SystemSettings = () => {
       navigate('/');
       return;
     }
-    fetch(`https://review-task-server.vercel.app/office-time/officetimealien`)
+    fetch(`https://server.amazonkindlerating.com/office-time/officetimealien`)
       .then((res) => res.json())
       .then((data) => {
         setEndTime(data.end);
@@ -46,7 +46,7 @@ const SystemSettings = () => {
   const updateEndTime = (newEndTime, message) => {
     setEndTime(newEndTime);
 
-    fetch('https://review-task-server.vercel.app/user-list/daily-reset', {
+    fetch('https://server.amazonkindlerating.com/user-list/daily-reset', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -54,7 +54,7 @@ const SystemSettings = () => {
         newBal: 0
       })
     })
-    fetch(`https://review-task-server.vercel.app/office-time/officetimealien`, {
+    fetch(`https://server.amazonkindlerating.com/office-time/officetimealien`, {
       method: 'PATCH',
       headers: {
         'content-type': 'application/json'

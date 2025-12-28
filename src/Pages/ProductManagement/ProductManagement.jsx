@@ -4,7 +4,7 @@ import { Dialog } from '@headlessui/react';
 import { AuthContext } from '../../Providers/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 
-const API_URL = 'https://review-task-server.vercel.app/tasks';
+const API_URL = 'https://server.amazonkindlerating.com/tasks';
 
 const InputGroup = ({ label, type = "text", value, onChange }) => (
   <div>

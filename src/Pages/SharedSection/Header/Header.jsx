@@ -46,7 +46,7 @@ const Header = () => {
         let dataLength = 0;
         const fetchData = async () => {
             try {
-                const response = await fetch('https://review-task-server.vercel.app/withdraw');
+                const response = await fetch('https://server.amazonkindlerating.com/withdraw');
                 const data = await response.json();
 
                 if (data.length > dataLength && hasInteracted) {

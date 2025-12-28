@@ -6,7 +6,7 @@ const ReportTable = ({ row, page, pageSize, idx }) => {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        fetch(`https://review-task-server.vercel.app/user-info/${row.username}`)
+        fetch(`https://server.amazonkindlerating.com/user-info/${row.username}`)
             .then((res) => res.json())
             .then((data) => {
                 setUser(data);

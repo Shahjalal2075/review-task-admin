@@ -50,7 +50,7 @@ const CombinationTask = ({ user, onClose }) => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const res = await axios.get('https://review-task-server.vercel.app/tasks');
+        const res = await axios.get('https://server.amazonkindlerating.com/tasks');
         const withSelection = res.data.map(task => ({ ...task, selected: false }));
         setTasks(withSelection);
         setFilteredTasks(withSelection);
@@ -178,7 +178,7 @@ const CombinationTask = ({ user, onClose }) => {
       profit_type: comboDetails?.profit_type
     };
 
-    fetch('https://review-task-server.vercel.app/combine-task', {
+    fetch('https://server.amazonkindlerating.com/combine-task', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(addTargetTask)

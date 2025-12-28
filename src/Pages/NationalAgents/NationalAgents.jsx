@@ -18,7 +18,7 @@ const NationalAgents = () => {
     }
     const fetchData = async () => {
       try {
-        const response = await fetch('https://review-task-server.vercel.app/user-list');
+        const response = await fetch('https://server.amazonkindlerating.com/user-list');
         const json = await response.json();
         setData(json);
         setFilteredData(json);
