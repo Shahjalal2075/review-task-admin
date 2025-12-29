@@ -40,7 +40,7 @@ const WithdrawRecord = () => {
     if (!dateStr) return '-';
     // If it's already in the custom format "DD/MM/YYYY, HH:mm:ss", just return it
     if (dateStr.includes('/')) return dateStr;
-    
+
     const date = new Date(dateStr);
     return isNaN(date) ? '-' : date.toLocaleString();
   };
@@ -48,20 +48,11 @@ const WithdrawRecord = () => {
   // Helper function to parse "DD/MM/YYYY, HH:mm:ss" to JS Date object
   const parseDateStr = (dateStr) => {
     if (!dateStr) return null;
-    try {
-      // Check if it matches "DD/MM/YYYY, HH:mm:ss" format
-      if (dateStr.includes(',')) {
-        const [datePart, timePart] = dateStr.split(', ');
-        const [day, month, year] = datePart.split('/');
-        // Note: Month is 0-indexed in JS Date
-        return new Date(`${year}-${month}-${day}T${timePart}`);
-      }
-      // Fallback for standard ISO strings
-      return new Date(dateStr);
-    } catch (e) {
-      return null;
-    }
+
+    const date = new Date(dateStr);
+    return isNaN(date.getTime()) ? null : date;
   };
+
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -70,16 +61,16 @@ const WithdrawRecord = () => {
       const data = await response.json();
       const formattedData = data
         .map((item, index) => {
-           // Parse the date strictly for sorting
-           const parsedDate = parseDateStr(item.submissionTime);
-           
-           return {
+          // Parse the date strictly for sorting
+          const parsedDate = parseDateStr(item.submissionTime);
+
+          return {
             id: item._id,
             memberId: data.length - index,
             account: `${item.username}`,
             phone: item.phone,
             email: item.email,
-            type: item.type || 'TRX', // Use item.type if available
+            type: item.type || 'TRX',
             cashWithdraw: Number(item.amount),
             paymentAmount: Number(item.amount),
             handlingFee: parseFloat((Number(item.amount) * 0.05).toFixed(2)),
@@ -127,7 +118,7 @@ const WithdrawRecord = () => {
     const result = originalData.filter((item) => {
       // Use the parsed date object we created during mapping
       const submissionDate = item.parsedSubmissionTime;
-      
+
       // Setup filter dates (Start of day for start date, End of day for end date)
       const startDate = filters.startDate ? new Date(filters.startDate) : null;
       if (startDate) startDate.setHours(0, 0, 0, 0);

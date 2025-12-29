@@ -29,6 +29,8 @@ const CombinationTask = ({ user, onClose }) => {
 
   // Predefined Combination Options
   const combinationOptions = [
+    { combination_name: "Sovereign Editions", profit_type: 5 },
+    { combination_name: "The Imperial Archive", profit_type: 10 },
     { combination_name: "The Gilded Collection", profit_type: 15 },
     { combination_name: "The Imperial Archive", profit_type: 15 },
     { combination_name: "Heirloom Library", profit_type: 20 },
