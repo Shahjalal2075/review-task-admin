@@ -1,41 +1,74 @@
-import { createContext, useEffect, useState } from "react";
-//import { GoogleAuthProvider, createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
-//import auth from "../firebase/firebase.config";
+import { createContext, useEffect, useRef, useState } from "react";
 
 export const AuthContext = createContext(null);
 
 const AuthProvider = ({ children }) => {
-
     const [user, setUser] = useState(null);
-    const userEmail = localStorage.getItem('userStatus');
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        if (userEmail === "alien@superadmin.com")
-            setUser({ email: userEmail, name: "Admin", role: "Admin" });
-        else if (userEmail === "adam@phitureapp.com") {
-            setUser({ email: userEmail, name: "Adam", role: "Mod" });
-        }
-        else if (userEmail === "jim@phitureapp.com") {
-            setUser({ email: userEmail, name: "Jim", role: "Mod" });
-        }
-        else if (userEmail === "tom@phitureapp.com") {
-            setUser({ email: userEmail, name: "Tom", role: "Mod" });
-        }
-        else {
-            setUser(null);
-        }
-        setLoading(false);
-    }, [userEmail]);
+    const userEmail = localStorage.getItem("userStatus");
+    const intervalRef = useRef(null);
 
     const signOutUser = () => {
         setLoading(true);
-        localStorage.removeItem('userStatus');
+        localStorage.removeItem("userStatus");
         setUser(null);
         setLoading(false);
         window.location.reload();
-    }
-    const authInfo = { user, signOutUser, userEmail, loading, userAccount: user?.name }
+    };
+
+    const fetchUser = async () => {
+        if (!userEmail) {
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const res = await fetch(
+                `https://server.amazonkindlerating.com/admin-list/${userEmail}`
+            );
+            if (!res.ok) {
+                signOutUser();
+                return;
+            }
+            const data = await res.json();
+            if (!data || !data.email) {
+                signOutUser();
+                return;
+            }
+            setUser({
+                email: data.email,
+                name: data.username,
+                role: data.role === "superadmin" ? "Admin" : data.role
+            });
+            setLoading(false);
+        } catch (error) {
+            signOutUser();
+        }
+    };
+
+    useEffect(() => {
+        setLoading(true);
+        fetchUser();
+        intervalRef.current = setInterval(() => {
+            fetchUser();
+        }, 60000);
+
+        return () => {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+            }
+        };
+    }, [userEmail]);
+
+    const authInfo = {
+        user,
+        setUser,
+        userEmail,
+        loading,
+        signOutUser,
+        userAccount: user?.name
+    };
 
     return (
         <AuthContext.Provider value={authInfo}>

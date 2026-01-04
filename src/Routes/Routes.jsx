@@ -32,6 +32,7 @@ import RewardTaskHistory from "../Pages/RewardTaskHistory/RewardTaskHistory";
 import Kyc from "../Pages/KYC/Kyc";
 import DepositAgent from "../Pages/DepositAgent/DepositAgent";
 import PromoCode from "../Pages/PromoCode/PromoCode";
+import AdminList from "../Pages/AdminList/AdminList";
 
 
 const Routes = createBrowserRouter([
@@ -155,6 +156,10 @@ const Routes = createBrowserRouter([
       {
         path: "/promo-code",
         element: <PromoCode></PromoCode>
+      },
+      {
+        path: "/admin-list",
+        element: <AdminList></AdminList>
       },
 
     ]

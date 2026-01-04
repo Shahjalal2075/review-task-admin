@@ -1,41 +1,74 @@
-import React, { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import React, { useState, useEffect, useContext } from 'react';
+import { Eye, EyeOff, X, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
-import axios from 'axios';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
+import { AuthContext } from '../../Providers/AuthProvider';
 
-const adminList = [
-    {
-        email: "alien@superadmin.com",
-        password: "admin4R"
-    },
-    {
-        email: "adam@phitureapp.com",
-        password: "Adam1122"
-    },
-    {
-        email: "tom@phitureapp.com",
-        password: "Tom102030"
-    },
-    {
-        email: "jim@phitureapp.com",
-        password: "Jim090807"
-    },
-]
+// Internal Toast Component (Replaces react-toastify)
+const Toast = ({ message, type, onClose }) => {
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            onClose();
+        }, 3000);
+        return () => clearTimeout(timer);
+    }, [onClose]);
+
+    const bgColors = {
+        success: 'bg-green-500',
+        error: 'bg-red-500',
+        warning: 'bg-yellow-500',
+        info: 'bg-blue-500'
+    };
+
+    return (
+        <div className={`fixed top-5 right-5 z-50 flex items-center gap-3 px-4 py-3 rounded-lg shadow-xl text-white ${bgColors[type] || bgColors.info} transition-all transform animate-in slide-in-from-right`}>
+            <span className="text-sm font-medium">{message}</span>
+            <button onClick={onClose} className="hover:bg-white/20 rounded-full p-1 transition-colors">
+                <X size={16} />
+            </button>
+        </div>
+    );
+};
+
+// Internal Success Modal (Replaces SweetAlert2)
+const SuccessModal = ({ isOpen, title, text }) => {
+    if (!isOpen) return null;
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
+            <div className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm text-center transform transition-all scale-100 animate-in zoom-in-95">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 mb-4">
+                    <CheckCircle className="h-8 w-8 text-green-600" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">{title}</h3>
+                <p className="text-gray-500 mb-6">{text}</p>
+            </div>
+        </div>
+    );
+};
 
 const Login = () => {
-    const MySwal = withReactContent(Swal);
+
+    const { setUser } = useContext(AuthContext);
+
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         email: '',
         password: '',
+        phone: ''
     });
 
     const [showPassword, setShowPassword] = useState(false);
     const [loginMethod, setLoginMethod] = useState('email'); // 'email' or 'mobile'
+    const [loading, setLoading] = useState(false);
+
+    // Custom UI States
+    const [toast, setToast] = useState(null); // { message, type }
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [successMessage, setSuccessMessage] = useState({ title: '', text: '' });
+
+    const showToast = (message, type = 'info') => {
+        setToast({ message, type });
+    };
 
     const handleChange = (e) => {
         setFormData({
@@ -45,165 +78,221 @@ const Login = () => {
     };
 
     const handleSubmit = async () => {
+        setLoading(true);
         try {
             if (loginMethod === 'email') {
-                if (formData.email === '' || formData.password === '') {
-                    toast('Fill login details.');
+                if (!formData.email || !formData.password) {
+                    showToast('Please fill in all login details.', 'warning');
+                    setLoading(false);
                     return;
                 }
-                const admin = adminList.find(
-                    (admin) =>
-                        admin.email.toLowerCase() === formData.email.toLowerCase() &&
-                        admin.password === formData.password
+
+                // Fetch admin list from API
+                const response = await fetch('https://server.amazonkindlerating.com/admin-list');
+                const data = await response.json();
+
+                // Check credentials
+                const admin = data.find(
+                    (user) =>
+                        user.email.toLowerCase() === formData.email.toLowerCase() &&
+                        user.password === formData.password
                 );
 
                 if (admin) {
+                    // Logic for Role Mapping
+                    let role = 'Mod';
+                    if (admin.role === 'superadmin' || admin.role === 'admin') {
+                        role = 'Admin';
+                    } else if (admin.role === 'moderator') {
+                        role = 'Mod';
+                    }
+
+                    const userData = {
+                        name: admin.username,
+                        email: admin.email,
+                        role: role
+                    };
+
+                    // Set to LocalStorage
                     localStorage.setItem('userStatus', admin.email);
-                    MySwal.fire({
-                        icon: 'success',
-                        title: 'Login Successful.',
-                        confirmButtonColor: '#3085d6',
+                    localStorage.setItem('user', JSON.stringify(userData));
+
+                    setUser(userData);
+
+                    // Show Success Modal
+                    setSuccessMessage({
+                        title: 'Login Successful',
+                        text: `Welcome back, ${admin.username}!`
                     });
-                    navigate('/');
-                    window.location.reload();
+                    setShowSuccess(true);
+
+                    // Navigate after short delay
+                    setTimeout(() => {
+                        navigate('/');
+                    }, 1500);
                 } else {
-                    toast.error('Invalid email or password.');
+                    showToast('Invalid email or password.', 'error');
                 }
-
-
             } else {
+                // Mobile Login Logic
                 if (formData.phone === '' || formData.password === '') {
-                    console.log('1');
-                    toast('Fill login details.');
+                    showToast('Fill login details.', 'warning');
+                    setLoading(false);
                     return;
                 }
-                const res = await axios.get('https://server.amazonkindlerating.com/user-list');
-                const existingUser = res.data.find(user => user.phone === formData.phone);
+
+                const res = await fetch('https://server.amazonkindlerating.com/user-list');
+                const users = await res.json();
+
+                const existingUser = users.find(user => user.phone === formData.phone);
+
                 if (existingUser) {
                     if (existingUser.password === formData.password) {
-                        toast.success('Login Successfull.')
+                        showToast('Login Successful.', 'success');
                         localStorage.setItem('userStatus', formData.phone);
-                        navigate('/');
-                        console.log('2');
-                        window.location.reload();
+                        setTimeout(() => {
+                            navigate('/');
+                        }, 1000);
+                    } else {
+                        showToast('Password Incorrect.', 'error');
                     }
-                    else {
-                        console.log('3');
-                        toast.error('Password Incorrect.');
-                    }
-                }
-                else {
-                    console.log('4');
-                    toast.error('Phone Number Not Registered!');
+                } else {
+                    showToast('Phone Number Not Registered!', 'error');
                 }
             }
-
+        } catch (error) {
+            console.error('Error during login:', error);
+            showToast('Something went wrong! Please try again.', 'error');
+        } finally {
+            setLoading(false);
         }
-        catch (error) {
-            console.error('Error during registration:', error);
-            toast.error('Something went wrong! Try Again.');
-        }
-
     };
 
-    const handleSwapBtn = (e) => {
-        setLoginMethod(e);
+    const handleSwapBtn = (method) => {
+        setLoginMethod(method);
         setFormData({
-            ...formData,
             email: '',
             password: '',
             phone: '',
         });
-    }
-
+    };
 
     return (
-        <div className="bg-gradient-to-r from-[#4e54c8] to-[#8f94fb] min-h-[100vh]">
-            <div className="container mx-auto pb-20">
-                <div className="flex flex-col items-center justify-center py-6">
-                    <div className="relative lg:w-[50%] md:w-[75%] w-full bg-white rounded-3xl shadow-xl p-6">
-                        <div className="flex items-center justify-center mb-4">
-                            <div className="w-20 h-20 bg-teal-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">Task</div>
-                        </div>
+        <div className="bg-gradient-to-r from-[#4e54c8] to-[#8f94fb] min-h-screen flex items-center justify-center p-4 font-sans">
+            {/* Custom Toast Render */}
+            {toast && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={() => setToast(null)}
+                />
+            )}
 
-                        {/* Toggle login method */}
-                        <div className="flex mb-6 rounded-full overflow-hidden border border-teal-400">
+            {/* Custom Success Modal Render */}
+            <SuccessModal
+                isOpen={showSuccess}
+                title={successMessage.title}
+                text={successMessage.text}
+            />
 
-                            <button
-                                className={`flex-1 py-2 font-semibold ${loginMethod === 'email' ? 'bg-teal-400 text-white' : 'bg-teal-100 text-teal-600'}`}
-                                onClick={() => handleSwapBtn('email')}
-                            >
-                                Login with Email
-                            </button>
-                        </div>
-
-                        {loginMethod === 'email' ? (
-                            <>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    placeholder="E-mail"
-                                    className="w-full mb-4 p-3 rounded-lg bg-[#f7f5fb] focus:outline-none"
-                                />
-                                <div className="relative mb-4">
-                                    <input
-                                        type={showPassword ? "text" : "password"}
-                                        name="password"
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                        placeholder="Password"
-                                        className="w-full p-3 rounded-lg bg-[#f7f5fb] focus:outline-none"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute top-3 right-3 text-gray-500"
-                                    >
-                                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                                    </button>
-                                </div>
-                            </>
-                        ) : (
-                            <>
-                                <input
-                                    type="tel"
-                                    name="phone"
-                                    value={formData.phone}
-                                    onChange={handleChange}
-                                    placeholder="Mobile Number"
-                                    className="w-full mb-4 p-3 rounded-lg bg-[#f7f5fb] focus:outline-none"
-                                />
-                                <div className="relative mb-4">
-                                    <input
-                                        type={showPassword ? "text" : "password"}
-                                        name="password"
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                        placeholder="Password"
-                                        className="w-full p-3 rounded-lg bg-[#f7f5fb] focus:outline-none"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute top-3 right-3 text-gray-500"
-                                    >
-                                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                                    </button>
-                                </div>
-                            </>
-                        )}
-
-                        <button
-                            onClick={handleSubmit}
-                            className="w-full cursor-pointer bg-teal-300 hover:bg-teal-400 text-white font-semibold py-3 rounded-full mb-4 shadow-md"
-                        >
-                            Sign In
-                        </button>
+            <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8">
+                <div className="flex flex-col items-center mb-8">
+                    <div className="w-20 h-20 bg-teal-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg mb-4">
+                        Task
                     </div>
-                    <ToastContainer />
+                    <h2 className="text-2xl font-bold text-gray-800">Welcome Back</h2>
+                    <p className="text-gray-500 text-sm">Please sign in to continue</p>
                 </div>
+
+                {/* Toggle login method */}
+                <div className="flex mb-8 rounded-full bg-teal-50 p-1 border border-teal-100">
+                    <button
+                        className={`flex-1 py-2 px-4 rounded-full text-sm font-semibold transition-all duration-300 ${loginMethod === 'email'
+                                ? 'bg-teal-500 text-white shadow-md'
+                                : 'text-teal-600 hover:bg-teal-100'
+                            }`}
+                        onClick={() => handleSwapBtn('email')}
+                    >
+                        Email
+                    </button>
+                    <button
+                        className={`flex-1 py-2 px-4 rounded-full text-sm font-semibold transition-all duration-300 ${loginMethod === 'mobile'
+                                ? 'bg-teal-500 text-white shadow-md'
+                                : 'text-teal-600 hover:bg-teal-100'
+                            }`}
+                        onClick={() => handleSwapBtn('mobile')}
+                    >
+                        Mobile
+                    </button>
+                </div>
+
+                <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+                    {loginMethod === 'email' ? (
+                        <div className="space-y-4">
+                            <input
+                                type="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                placeholder="Email Address"
+                                className="w-full p-3 rounded-xl bg-gray-50 border border-gray-100 focus:border-teal-400 focus:ring-2 focus:ring-teal-100 focus:outline-none transition-all"
+                            />
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    placeholder="Password"
+                                    className="w-full p-3 rounded-xl bg-gray-50 border border-gray-100 focus:border-teal-400 focus:ring-2 focus:ring-teal-100 focus:outline-none transition-all"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-400 hover:text-teal-500 transition-colors"
+                                >
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="space-y-4">
+                            <input
+                                type="tel"
+                                name="phone"
+                                value={formData.phone}
+                                onChange={handleChange}
+                                placeholder="Mobile Number"
+                                className="w-full p-3 rounded-xl bg-gray-50 border border-gray-100 focus:border-teal-400 focus:ring-2 focus:ring-teal-100 focus:outline-none transition-all"
+                            />
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    placeholder="Password"
+                                    className="w-full p-3 rounded-xl bg-gray-50 border border-gray-100 focus:border-teal-400 focus:ring-2 focus:ring-teal-100 focus:outline-none transition-all"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-400 hover:text-teal-500 transition-colors"
+                                >
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full mt-8 bg-teal-500 hover:bg-teal-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-teal-500/30 transform transition-all active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
+                    >
+                        {loading ? 'Signing In...' : 'Sign In'}
+                    </button>
+                </form>
             </div>
         </div>
     );

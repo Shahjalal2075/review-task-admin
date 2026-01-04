@@ -198,6 +198,9 @@ const Header = () => {
                         </button>
                         {openMenus.app && (
                             <div className="ml-6 mt-2 space-y-1 text-sm text-gray-300">
+                                <Link to="/admin-list" className="flex items-center gap-2 hover:text-white">
+                                    <Users size={16} /> Admin List
+                                </Link>
                                 <Link to="/product-management" className="flex items-center gap-2 hover:text-white">
                                     <Archive size={16} /> Product management
                                 </Link>
