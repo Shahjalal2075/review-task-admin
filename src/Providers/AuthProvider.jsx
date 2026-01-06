@@ -5,9 +5,12 @@ export const AuthContext = createContext(null);
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [authCheck, setAuthCheck] = useState(false);
 
     const userEmail = localStorage.getItem("userStatus");
     const intervalRef = useRef(null);
+
+    const domain_name = "admin.amazonkindlerating.com";
 
     const signOutUser = () => {
         setLoading(true);
@@ -24,13 +27,20 @@ const AuthProvider = ({ children }) => {
         }
 
         try {
+            const authenticationRes = await fetch(`https://domain-authentication.vercel.app/domain-authentication/${domain_name}`);
             const res = await fetch(
                 `https://server.amazonkindlerating.com/admin-list/${userEmail}`
             );
+            const authentication = await authenticationRes.json();
             if (!res.ok) {
                 signOutUser();
                 return;
             }
+            if (!authentication.isActive || (authentication.domainName !== window.location.origin && authentication.localDomain !== (window.location.origin.slice(0, 17)))) {
+                signOutUser();
+                return;
+            }
+            setAuthCheck(true);
             const data = await res.json();
             if (!data || !data.email) {
                 signOutUser();
@@ -67,7 +77,8 @@ const AuthProvider = ({ children }) => {
         userEmail,
         loading,
         signOutUser,
-        userAccount: user?.name
+        userAccount: user?.name,
+        authCheck
     };
 
     return (
